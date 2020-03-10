@@ -75,4 +75,10 @@ public class Sessione {
 		this.utente = utente;
 	}
 
+	@Override
+	public String toString() {
+		return "Sessione [id=" + id + ", tokenDiAutenticazione=" + tokenDiAutenticazione + ", dataInizioSessione="
+				+ dataInizioSessione + ", dataScadenzaSessione=" + dataScadenzaSessione + "]";
+	}
+
 }
