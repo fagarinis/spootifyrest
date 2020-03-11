@@ -74,7 +74,6 @@ public class UtenteController {
 	public ResponseEntity<UtenteDTO> updateUtente(@PathVariable(value = "id") Long id,
 			@Valid UtenteDTOUpdate utenteDTO) {
 		utenteDTO.setId(id);
-		System.out.println(utenteDTO);
 		Utente utenteDaModificare = UtenteDTOUpdate.buildUtenteModelFromDTO(utenteDTO, true);
 		Utente utenteModificato = utenteService.aggiornaUtenteConRuoli(utenteDaModificare);
 		UtenteDTO utenteModificatoDTO = UtenteDTO.buildUtenteDTOFromModel(utenteModificato, true);

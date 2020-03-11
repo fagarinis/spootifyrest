@@ -28,7 +28,7 @@ public class LoginController {
 		if (utenteLoggato == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "login fallito");
 		}
-
+		//TODO ritornare il token della sessione
 		UtenteDTO utenteLoggatoDTO = UtenteDTO.buildUtenteDTOFromModel(utenteLoggato, includeRuoli);
 		return ResponseEntity.ok(utenteLoggatoDTO);
 	}
