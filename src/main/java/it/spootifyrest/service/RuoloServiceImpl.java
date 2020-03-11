@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.spootifyrest.model.Ruolo;
+import it.spootifyrest.model.en.CodiceRuolo;
 import it.spootifyrest.repository.RuoloRepository;
 
 @Service
@@ -54,5 +55,13 @@ public class RuoloServiceImpl implements RuoloService {
 		ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(StringMatcher.CONTAINING);
 		return (List<Ruolo>) ruoloRepository.findAll(Example.of(example, matcher));
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Ruolo cercaDaCodiceRuolo(CodiceRuolo codiceRuolo) {
+		return ruoloRepository.findByCodice(codiceRuolo).orElse(null);
+	}
+	
+	
 
 }

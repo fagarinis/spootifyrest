@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -42,6 +43,9 @@ public class Utente {
 	// se non uso questa annotation viene gestito come un intero
 	@Enumerated(EnumType.STRING)
 	private StatoUtente stato = StatoUtente.CREATO;
+
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "utente")
+	private Sessione sessione;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
 	@JoinTable(name = "utente_ruolo", joinColumns = @JoinColumn(name = "utente_id", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "ruolo_id", referencedColumnName = "ID"))
@@ -139,6 +143,23 @@ public class Utente {
 
 	public void setPlaylist(List<Playlist> playlist) {
 		this.playlist = playlist;
+	}
+
+	public Sessione getSessione() {
+		return sessione;
+	}
+
+	public void setSessione(Sessione sessione) {
+		this.sessione = sessione;
+		this.sessione.setUtente(this);
+	}
+
+	public List<Riproduzione> getRiproduzioni() {
+		return riproduzioni;
+	}
+
+	public void setRiproduzioni(List<Riproduzione> riproduzioni) {
+		this.riproduzioni = riproduzioni;
 	}
 
 }

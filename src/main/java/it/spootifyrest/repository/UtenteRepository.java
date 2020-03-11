@@ -21,4 +21,7 @@ public interface UtenteRepository extends IBaseRepository<Utente> {
 
 	@Query("select distinct u from Utente u join fetch u.ruoli r where u.stato ='ATTIVO' and u.cognome like %?2% and r.codice = ?1")
 	List<Utente> findUsersByRoleCodeAndSurnameLike(CodiceRuolo codiceRuolo, String cognome);
+
+	@Query("select u from Utente u left join fetch u.ruoli r left join fetch u.sessione s where u.username = ?1 and u.password = ?2 and u.stato = ?3")
+	Optional<Utente> findEagerByUsernameAndPasswordAndStato(String username, String password, StatoUtente attivo);
 }

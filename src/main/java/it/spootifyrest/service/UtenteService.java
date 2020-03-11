@@ -23,7 +23,7 @@ public interface UtenteService extends IBaseService<Utente> {
 
 	public boolean isUsernameDisponibile(String username);
 
-	public Utente registraUtente(Utente utenteInstance);
+	public Utente registraUtente(Utente utenteInstance, CodiceRuolo ruolo);
 	
 	public Utente attivaUtenteDaId(Long id);
 

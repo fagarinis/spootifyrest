@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.spootifyrest.model.Ruolo;
+import it.spootifyrest.model.Sessione;
 import it.spootifyrest.model.Utente;
 import it.spootifyrest.model.en.CodiceRuolo;
 import it.spootifyrest.model.en.StatoUtente;
@@ -24,6 +25,8 @@ import it.spootifyrest.repository.UtenteRepository;
 @Service
 public class UtenteServiceImpl implements UtenteService {
 
+	private final static int durataMinutiSessione = 5;
+
 	@Autowired
 	private EntityManager entityManager;
 
@@ -32,6 +35,9 @@ public class UtenteServiceImpl implements UtenteService {
 
 	@Autowired
 	private RuoloService ruoloService;
+
+	@Autowired
+	private SessioneService sessioneService;
 
 	@Transactional(readOnly = true)
 	public List<Utente> listAll() {
@@ -65,9 +71,25 @@ public class UtenteServiceImpl implements UtenteService {
 		return (List<Utente>) repository.findAll(Example.of(utenteExample, matcher));
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Utente eseguiAccesso(String username, String password) {
-		return repository.findByUsernameAndPasswordAndStato(username, password, StatoUtente.ATTIVO).orElse(null);
+		Utente utenteLoggato = repository.findEagerByUsernameAndPasswordAndStato(username, password, StatoUtente.ATTIVO)
+				.orElse(null);
+		if (utenteLoggato == null) {
+			return null;
+		}
+		
+		//se non è mai stata creata una sessione sul db
+		if (utenteLoggato.getSessione() == null) {
+			utenteLoggato.setSessione(new Sessione(durataMinutiSessione));
+		}
+		else {
+			utenteLoggato.getSessione().refresh(durataMinutiSessione);
+		}
+
+		sessioneService.aggiorna(utenteLoggato.getSessione());
+
+		return utenteLoggato;
 	}
 
 	@Transactional(readOnly = true)
@@ -153,9 +175,17 @@ public class UtenteServiceImpl implements UtenteService {
 
 	@Transactional
 	@Override
-	public Utente registraUtente(Utente utenteInstance) {
+	public Utente registraUtente(Utente utenteInstance, CodiceRuolo codiceRuolo) {
+		if (!isUsernameDisponibile(utenteInstance.getUsername())) {
+			return null;
+		}
+
 		utenteInstance.setStato(StatoUtente.CREATO);
 		utenteInstance.setDataRegistrazione(new Date());
+		Ruolo ruoloDaSettare = ruoloService.cercaDaCodiceRuolo(codiceRuolo);
+		if (ruoloDaSettare != null) {
+			utenteInstance.getRuoli().add(ruoloDaSettare);
+		}
 		inserisciNuovo(utenteInstance);
 		return utenteInstance;
 	}

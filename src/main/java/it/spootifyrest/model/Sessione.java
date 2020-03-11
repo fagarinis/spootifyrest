@@ -3,11 +3,14 @@ package it.spootifyrest.model;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import it.spootifyrest.model.utils.DateUtils;
 
@@ -16,8 +19,16 @@ public class Sessione {
 
 	@Id
 	private Long id;
+
+	@Column(nullable = false)
 	private String tokenDiAutenticazione;
+
+	@Column(nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataInizioSessione;
+
+	@Column(nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataScadenzaSessione;
 
 	@OneToOne(fetch = FetchType.LAZY)
@@ -79,6 +90,14 @@ public class Sessione {
 	public String toString() {
 		return "Sessione [id=" + id + ", tokenDiAutenticazione=" + tokenDiAutenticazione + ", dataInizioSessione="
 				+ dataInizioSessione + ", dataScadenzaSessione=" + dataScadenzaSessione + "]";
+	}
+
+	public void refresh(int durataminutisessione) {
+		Date dataInizio = new Date();
+		this.setDataInizioSessione(dataInizio);
+		Date dataFine = DateUtils.addMinutesToDate(durataminutisessione, dataInizio);
+		this.setDataScadenzaSessione(dataFine);
+		this.setTokenDiAutenticazione(UUID.randomUUID().toString());
 	}
 
 }
