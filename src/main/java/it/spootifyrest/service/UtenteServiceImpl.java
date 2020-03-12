@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import it.spootifyrest.model.Ruolo;
 import it.spootifyrest.model.Sessione;
 import it.spootifyrest.model.Utente;
+import it.spootifyrest.model.constants.SpootifyConstants;
 import it.spootifyrest.model.en.CodiceRuolo;
 import it.spootifyrest.model.en.StatoUtente;
 import it.spootifyrest.model.utils.DateUtils;
@@ -25,8 +26,7 @@ import it.spootifyrest.repository.UtenteRepository;
 @Service
 public class UtenteServiceImpl implements UtenteService {
 
-	//creare classe di costanti TODO
-	private final static int DURATA_MINUTI_SESSIONE = 5;
+	
 
 	@Autowired
 	private EntityManager entityManager;
@@ -82,10 +82,10 @@ public class UtenteServiceImpl implements UtenteService {
 		
 		//se non è mai stata creata una sessione sul db
 		if (utenteLoggato.getSessione() == null) {
-			utenteLoggato.setSessione(new Sessione(DURATA_MINUTI_SESSIONE));
+			utenteLoggato.setSessione(new Sessione(SpootifyConstants.DURATA_MINUTI_SESSIONE));
 		}
 		else {
-			utenteLoggato.getSessione().refresh(DURATA_MINUTI_SESSIONE);
+			utenteLoggato.getSessione().refresh(SpootifyConstants.DURATA_MINUTI_SESSIONE);
 		}
 
 		sessioneService.aggiorna(utenteLoggato.getSessione());
@@ -197,6 +197,20 @@ public class UtenteServiceImpl implements UtenteService {
 		Utente utenteDaAttivare = this.caricaSingoloUtenteEager(id);
 		utenteDaAttivare.setStato(StatoUtente.ATTIVO);
 		return utenteDaAttivare;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Utente caricaUtenteConSessioneValidaDaToken(String token) {
+		if(token == null) {
+			return null;
+		}
+		Utente utente = repository.findUtenteWithValidSessionFromToken(token).orElse(null);
+		if(utente.getSessione().isValid()) {
+			return utente;
+		}
+		
+		return null;
 	}
 
 }

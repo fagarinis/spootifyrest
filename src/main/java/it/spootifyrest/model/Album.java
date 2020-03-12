@@ -99,4 +99,12 @@ public class Album {
 				+ genereMusicale + ", artista=" + artista + "]";
 	}
 
+	public Brano getPrimoBrano() {
+		if (brani == null || brani.isEmpty()) {
+			return null;
+		}
+
+		return brani.get(0);
+	}
+
 }

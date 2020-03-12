@@ -79,4 +79,12 @@ public class Playlist {
 		this.brani = brani;
 	}
 
+	public Brano getPrimoBrano() {
+		if (brani == null || brani.isEmpty()) {
+			return null;
+		}
+
+		return brani.get(0);
+	}
+
 }

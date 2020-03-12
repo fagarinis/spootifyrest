@@ -18,9 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import it.spootifyrest.model.Brano;
 import it.spootifyrest.model.Playlist;
+import it.spootifyrest.model.Riproduzione;
+import it.spootifyrest.model.Utente;
 import it.spootifyrest.service.BranoService;
 import it.spootifyrest.service.PlaylistService;
+import it.spootifyrest.service.RiproduzioneService;
 import it.spootifyrest.service.UtenteService;
 import it.spootifyrest.web.dto.brano.BranoDTO;
 import it.spootifyrest.web.dto.playlist.PlaylistDTO;
@@ -37,18 +41,41 @@ public class PlaylistController {
 	private UtenteService utenteService;
 
 	@Autowired
+	private RiproduzioneService riproduzioneService;
+
+	@Autowired
 	private BranoService branoService;
-	
+
 	@Autowired
 	private HttpServletRequest httpServletRequest;
-	
+
 	/**
 	 * @param id della playlist
-	 * @return l'ultimo brano della playlist riprodotto, il primo se non è ancora mai stato riprodotto
+	 * @return l'ultimo brano della playlist riprodotto, il primo se non è ancora
+	 *         mai stato riprodotto
 	 */
-	@PostMapping("/{id}/play")
-	public ResponseEntity<BranoDTO> resumePlay(@PathVariable(value = "id") Long id){
-		return null; //TODO
+	@GetMapping("/{id}/play")
+	public ResponseEntity<BranoDTO> play(@PathVariable(value = "id") Long id) {
+		String token = httpServletRequest.getHeader("token"); // ricevo il token per identificare l'utente
+		if (token == null) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+					"Token di autenticazione non presente nell'header");
+		}
+
+		Utente utenteInSessione = utenteService.caricaUtenteConSessioneValidaDaToken(token);
+		if (utenteInSessione == null) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token di autenticazione scaduto o non valido");
+		}
+		if (playlistService.caricaSingolo(id) == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "playlist con id " + id + " non trovata");
+		}
+
+		Riproduzione riproduzioneAggiornata = riproduzioneService.ascoltaProssimoBranoDaRaccolta(id,
+				utenteInSessione.getId(), false);
+		Brano prossimoBrano = riproduzioneAggiornata.getBrano();
+		BranoDTO prossimoBranoDTO = BranoDTO.buildBranoDTOFromModel(prossimoBrano, true);
+
+		return ResponseEntity.ok(prossimoBranoDTO);
 	}
 
 	@GetMapping

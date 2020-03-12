@@ -100,4 +100,8 @@ public class Sessione {
 		this.setTokenDiAutenticazione(UUID.randomUUID().toString());
 	}
 
+	public boolean isValid() {
+		return dataScadenzaSessione.after(new Date());
+	}
+
 }

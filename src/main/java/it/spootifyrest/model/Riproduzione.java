@@ -1,5 +1,7 @@
 package it.spootifyrest.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -74,6 +76,47 @@ public class Riproduzione {
 
 	public void setPlaylist(Playlist playlist) {
 		this.playlist = playlist;
+	}
+
+	/**
+	 * mette il prossimo brano in ascolto
+	 * 
+	 * @return il prossimo brano
+	 */
+	public Brano next() {
+		List<Brano> listaBrani = getListaBrani();
+		Brano branoInRiproduzione = this.getBrano();
+
+		// FIXME i brani devono essere ordinati per id... ho messo il print per controllare
+		System.out.println("lista brani: " + listaBrani);
+
+		this.brano = prossimoBrano(listaBrani, branoInRiproduzione);
+		return this.brano;
+	}
+
+	private Brano prossimoBrano(List<Brano> listaBrani, Brano branoInRiproduzione) {
+		for (int i = 0; i < listaBrani.size(); i++) {
+			if (listaBrani.get(i).getId() == branoInRiproduzione.getId()) {
+				Brano prossimoBrano = listaBrani.get((i + 1) % listaBrani.size());
+				return prossimoBrano;
+			}
+		}
+		return null;
+	}
+
+	private List<Brano> getListaBrani() {
+		if (album != null && playlist != null) {
+			// c'è un errore...
+			return null;
+		}
+		if (playlist != null) {
+			return this.getPlaylist().getBrani();
+		}
+		if (album != null) {
+			return this.getAlbum().getBrani();
+		}
+
+		return null;
 	}
 
 }

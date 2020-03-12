@@ -27,4 +27,6 @@ public interface UtenteService extends IBaseService<Utente> {
 	
 	public Utente attivaUtenteDaId(Long id);
 
+	public Utente caricaUtenteConSessioneValidaDaToken(String token);
+
 }

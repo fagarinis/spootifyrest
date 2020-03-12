@@ -62,20 +62,6 @@ public class BranoServiceImpl implements BranoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Brano findLastBranoByUtenteIdAndPlaylistId(Long utenteId, Long playlistId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public Brano findLastBranoByUtenteIdAndAlbumId(Long utenteId, Long albumId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public Brano caricaSingoloEager(Long id) {
 		return branoRepository.findByIdEager(id).orElse(null);
 	}
