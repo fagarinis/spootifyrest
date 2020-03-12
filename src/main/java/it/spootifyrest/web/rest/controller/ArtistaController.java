@@ -7,15 +7,17 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import it.spootifyrest.model.Artista;
-import it.spootifyrest.model.Utente;
 import it.spootifyrest.service.ArtistaService;
 import it.spootifyrest.web.dto.artista.ArtistaDTO;
 
@@ -45,7 +47,7 @@ public class ArtistaController {
 	}
 
 	@PostMapping
-	public ResponseEntity<ArtistaDTO> insertArtista(@Valid ArtistaDTO artistaDTO) {
+	public ResponseEntity<ArtistaDTO> insertArtista(@RequestBody @Valid ArtistaDTO artistaDTO) {
 		boolean includeAlbum = false;
 		Artista artistaModel = ArtistaDTO.buildArtistaModelFromDTO(artistaDTO, includeAlbum);
 		artistaService.inserisciNuovo(artistaModel);
@@ -54,7 +56,8 @@ public class ArtistaController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<ArtistaDTO> updateArtista(@PathVariable(value = "id") Long id, ArtistaDTO artistaDTO) {
+	public ResponseEntity<ArtistaDTO> updateArtista(@PathVariable(value = "id") Long id,
+			@RequestBody ArtistaDTO artistaDTO) {
 		artistaDTO.setId(id);
 		boolean includeAlbum = false;
 		Artista artistaUpdate = ArtistaDTO.buildArtistaModelFromDTO(artistaDTO, includeAlbum);
@@ -63,6 +66,19 @@ public class ArtistaController {
 		ArtistaDTO artistaModificatoDTO = ArtistaDTO.buildArtistaDTOFromModel(artistaUpdate, includeAlbum);
 
 		return ResponseEntity.ok(artistaModificatoDTO);
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<ArtistaDTO> deleteArtista(@PathVariable(value = "id") Long id) {
+		boolean includeAlbum = false;
+		Artista artistaDaCancellare = artistaService.caricaSingolo(id);
+		if(artistaDaCancellare == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					"id " + id + " non trovato");
+		}
+		artistaService.rimuovi(artistaDaCancellare);
+		ArtistaDTO artistaCancellato = ArtistaDTO.buildArtistaDTOFromModel(artistaDaCancellare, includeAlbum);
+		return ResponseEntity.ok(artistaCancellato);
 	}
 
 }

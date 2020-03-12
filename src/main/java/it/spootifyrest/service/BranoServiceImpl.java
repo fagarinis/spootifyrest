@@ -2,6 +2,8 @@ package it.spootifyrest.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -17,6 +19,9 @@ public class BranoServiceImpl implements BranoService {
 
 	@Autowired
 	private BranoRepository branoRepository;
+
+	@Autowired
+	private EntityManager entityManager;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -67,6 +72,30 @@ public class BranoServiceImpl implements BranoService {
 	public Brano findLastBranoByUtenteIdAndAlbumId(Long utenteId, Long albumId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Brano caricaSingoloEager(Long id) {
+		return branoRepository.findByIdEager(id).orElse(null);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Brano> caricaBraniDaIdPlaylist(Long idPlaylist) {
+		return branoRepository.findAllByPlaylistId(idPlaylist);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Brano> caricaBraniDaListaBraniTransient(List<Brano> brani) {
+		String query = "SELECT DISTINCT b FROM Brano b where 1=0 ";
+
+		for (Brano brano : brani) {
+			query += " or b.id = " + brano.getId() + " ";
+		}
+
+		return entityManager.createQuery(query, Brano.class).getResultList();
 	}
 
 }

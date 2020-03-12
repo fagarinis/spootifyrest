@@ -1,7 +1,6 @@
 package it.spootifyrest.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -20,7 +19,7 @@ public class Album {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String nomeAlbum;
-	private Date dataDiUscita;
+	private Integer annoDiUscita;
 	private String genereMusicale;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -30,6 +29,13 @@ public class Album {
 	private List<Brano> brani = new ArrayList<>();
 	@OneToMany(mappedBy = "album", orphanRemoval = true)
 	private List<Riproduzione> riproduzioni = new ArrayList<>();
+
+	public Album() {
+	}
+
+	public Album(Long id) {
+		this.id = id;
+	}
 
 	public Long getId() {
 		return id;
@@ -47,12 +53,12 @@ public class Album {
 		this.nomeAlbum = nomeAlbum;
 	}
 
-	public Date getDataDiUscita() {
-		return dataDiUscita;
+	public Integer getAnnoDiUscita() {
+		return annoDiUscita;
 	}
 
-	public void setDataDiUscita(Date dataDiUscita) {
-		this.dataDiUscita = dataDiUscita;
+	public void setAnnoDiUscita(Integer annoDiUscita) {
+		this.annoDiUscita = annoDiUscita;
 	}
 
 	public String getGenereMusicale() {
@@ -89,7 +95,7 @@ public class Album {
 
 	@Override
 	public String toString() {
-		return "Album [id=" + id + ", nomeAlbum=" + nomeAlbum + ", dataDiUscita=" + dataDiUscita + ", genereMusicale="
+		return "Album [id=" + id + ", nomeAlbum=" + nomeAlbum + ", annoDiUscita=" + annoDiUscita + ", genereMusicale="
 				+ genereMusicale + ", artista=" + artista + "]";
 	}
 

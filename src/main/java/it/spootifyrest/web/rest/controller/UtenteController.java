@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -48,9 +49,9 @@ public class UtenteController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<UtenteDTO> registraNuovoUtenteCustomer(@Valid UtenteDTORegistrazione utenteDTORegistrazione) {
+	public ResponseEntity<UtenteDTO> registraNuovoUtenteCustomer(
+			@RequestBody @Valid UtenteDTORegistrazione utenteDTORegistrazione) {
 
-		
 		Utente utenteModel = UtenteDTORegistrazione.buildUtenteModelFromDTO(utenteDTORegistrazione);
 		Utente utenteRegistrato = utenteService.registraUtente(utenteModel, CodiceRuolo.CUSTOMER_ROLE);
 		if (utenteRegistrato == null) {
@@ -72,7 +73,7 @@ public class UtenteController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<UtenteDTO> updateUtente(@PathVariable(value = "id") Long id,
-			@Valid UtenteDTOUpdate utenteDTO) {
+			@RequestBody @Valid UtenteDTOUpdate utenteDTO) {
 		utenteDTO.setId(id);
 		Utente utenteDaModificare = UtenteDTOUpdate.buildUtenteModelFromDTO(utenteDTO, true);
 		Utente utenteModificato = utenteService.aggiornaUtenteConRuoli(utenteDaModificare);

@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import it.spootifyrest.model.Album;
 import it.spootifyrest.model.Artista;
 
@@ -17,6 +19,7 @@ public class ArtistaDTO {
 	private String cognome;
 	private String soprannome;
 
+	@JsonIgnoreProperties(value = { "artista" ,"brani","riproduzioni"})
 	private List<Album> album = new ArrayList<>();
 
 	public Long getId() {

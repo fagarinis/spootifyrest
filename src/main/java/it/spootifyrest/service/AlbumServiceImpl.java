@@ -55,4 +55,24 @@ public class AlbumServiceImpl implements AlbumService {
 		return (List<Album>) albumRepository.findAll(Example.of(example, matcher));
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Album caricaSingoloEager(Long id) {
+		return albumRepository.findByIdEager(id).orElse(null);
+	}
+
+	/**
+	 * aggiorna mantenendo i field artista e brani dell'album presenti sul DB
+	 */
+	@Override
+	@Transactional
+	public void aggiornaSoloAlbum(Album o) {
+		Album albumPersist = caricaSingoloEager(o.getId());
+
+		o.setArtista(albumPersist.getArtista());
+		o.setBrani(albumPersist.getBrani());
+
+		albumRepository.save(o);
+	}
+
 }

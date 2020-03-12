@@ -25,7 +25,8 @@ import it.spootifyrest.repository.UtenteRepository;
 @Service
 public class UtenteServiceImpl implements UtenteService {
 
-	private final static int durataMinutiSessione = 5;
+	//creare classe di costanti TODO
+	private final static int DURATA_MINUTI_SESSIONE = 5;
 
 	@Autowired
 	private EntityManager entityManager;
@@ -81,10 +82,10 @@ public class UtenteServiceImpl implements UtenteService {
 		
 		//se non è mai stata creata una sessione sul db
 		if (utenteLoggato.getSessione() == null) {
-			utenteLoggato.setSessione(new Sessione(durataMinutiSessione));
+			utenteLoggato.setSessione(new Sessione(DURATA_MINUTI_SESSIONE));
 		}
 		else {
-			utenteLoggato.getSessione().refresh(durataMinutiSessione);
+			utenteLoggato.getSessione().refresh(DURATA_MINUTI_SESSIONE);
 		}
 
 		sessioneService.aggiorna(utenteLoggato.getSessione());
