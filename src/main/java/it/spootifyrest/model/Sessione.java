@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import it.spootifyrest.model.constants.SpootifyConstants;
 import it.spootifyrest.model.utils.DateUtils;
 
 @Entity
@@ -36,6 +37,7 @@ public class Sessione {
 	private Utente utente;
 
 	public Sessione() {
+		this(SpootifyConstants.DURATA_MINUTI_SESSIONE);
 	}
 
 	public Sessione(int durataMinuti) {
@@ -92,16 +94,17 @@ public class Sessione {
 				+ dataInizioSessione + ", dataScadenzaSessione=" + dataScadenzaSessione + "]";
 	}
 
-	public void refresh(int durataminutisessione) {
+	public void refresh() {
+		int durataminutisessione = SpootifyConstants.DURATA_MINUTI_SESSIONE;
 		Date dataInizio = new Date();
 		this.setDataInizioSessione(dataInizio);
 		Date dataFine = DateUtils.addMinutesToDate(durataminutisessione, dataInizio);
 		this.setDataScadenzaSessione(dataFine);
-		this.setTokenDiAutenticazione(UUID.randomUUID().toString());
 	}
 
 	public boolean isValid() {
-		return dataScadenzaSessione.after(new Date());
+		Date adesso = new Date();
+		return dataScadenzaSessione.after(adesso);
 	}
 
 }

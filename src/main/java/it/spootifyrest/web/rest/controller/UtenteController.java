@@ -31,7 +31,7 @@ public class UtenteController {
 	@Autowired
 	private UtenteService utenteService;
 
-	@GetMapping
+	@GetMapping("/admin/")
 	public ResponseEntity<List<UtenteDTO>> findByExample(UtenteDTO utenteDTO) {
 		boolean includeRuoli = true;
 		Utente utenteModel = UtenteDTO.buildUtenteModelFromDTO(utenteDTO, includeRuoli);
@@ -48,22 +48,9 @@ public class UtenteController {
 		return ResponseEntity.ok(utenteDTO);
 	}
 
-	@PostMapping("/register")
-	public ResponseEntity<UtenteDTO> registraNuovoUtenteCustomer(
-			@RequestBody @Valid UtenteDTORegistrazione utenteDTORegistrazione) {
 
-		Utente utenteModel = UtenteDTORegistrazione.buildUtenteModelFromDTO(utenteDTORegistrazione);
-		Utente utenteRegistrato = utenteService.registraUtente(utenteModel, CodiceRuolo.CUSTOMER_ROLE);
-		if (utenteRegistrato == null) {
-//			return ResponseEntity.status(HttpStatus.CONFLICT).body(DTOConMessaggioDentro); si dovrebbe fare così
-			throw new ResponseStatusException(HttpStatus.CONFLICT,
-					"username " + utenteModel.getUsername() + " non disponibile");
-		}
-		UtenteDTO utenteDTO = UtenteDTO.buildUtenteDTOFromModel(utenteRegistrato, true);
-		return ResponseEntity.ok(utenteDTO);
-	}
 
-	@PutMapping("/{id}/activate")
+	@PutMapping("/admin/{id}/activate")
 	public ResponseEntity<UtenteDTO> activateUtente(@PathVariable(value = "id") Long id) {
 		Utente utenteAttivato = utenteService.attivaUtenteDaId(id);
 		UtenteDTO utenteAttivatoDTO = UtenteDTO.buildUtenteDTOFromModel(utenteAttivato, true);
@@ -71,7 +58,7 @@ public class UtenteController {
 		return ResponseEntity.ok(utenteAttivatoDTO);
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/admin/{id}")
 	public ResponseEntity<UtenteDTO> updateUtente(@PathVariable(value = "id") Long id,
 			@RequestBody @Valid UtenteDTOUpdate utenteDTO) {
 		utenteDTO.setId(id);

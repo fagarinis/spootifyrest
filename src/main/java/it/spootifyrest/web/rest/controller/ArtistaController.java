@@ -46,7 +46,7 @@ public class ArtistaController {
 		return ResponseEntity.ok(artistaDTO);
 	}
 
-	@PostMapping
+	@PostMapping("/admin/")
 	public ResponseEntity<ArtistaDTO> insertArtista(@RequestBody @Valid ArtistaDTO artistaDTO) {
 		boolean includeAlbum = false;
 		Artista artistaModel = ArtistaDTO.buildArtistaModelFromDTO(artistaDTO, includeAlbum);
@@ -55,7 +55,7 @@ public class ArtistaController {
 		return ResponseEntity.ok(artistaDTOInserito);
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/admin/{id}")
 	public ResponseEntity<ArtistaDTO> updateArtista(@PathVariable(value = "id") Long id,
 			@RequestBody ArtistaDTO artistaDTO) {
 		artistaDTO.setId(id);
@@ -68,7 +68,7 @@ public class ArtistaController {
 		return ResponseEntity.ok(artistaModificatoDTO);
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/admin/{id}")
 	public ResponseEntity<ArtistaDTO> deleteArtista(@PathVariable(value = "id") Long id) {
 		boolean includeAlbum = false;
 		Artista artistaDaCancellare = artistaService.caricaSingolo(id);

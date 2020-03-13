@@ -162,4 +162,10 @@ public class Utente {
 		this.riproduzioni = riproduzioni;
 	}
 
+	@Override
+	public String toString() {
+		return "Utente [id=" + id + ", nome=" + nome + ", cognome=" + cognome + ", username=" + username + ", stato="
+				+ stato + ", ruoli=" + ruoli + "]";
+	}
+
 }

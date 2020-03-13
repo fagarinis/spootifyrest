@@ -56,7 +56,7 @@ public class BranoController {
 		return ResponseEntity.ok(branoDTO);
 	}
 
-	@PostMapping
+	@PostMapping("/admin/")
 	public ResponseEntity<BranoDTO> insertBrano(@RequestBody @Valid BranoDTO branoDTO) {
 		boolean includeAlbum = true;
 		
@@ -75,7 +75,7 @@ public class BranoController {
 		return ResponseEntity.ok(branoDTOInserito);
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/admin/{id}")
 	public ResponseEntity<BranoDTO> updateBrano(@PathVariable(value = "id") Long id, @RequestBody @Valid BranoDTO branoDTO) {
 		Album albumDaAssociare = albumService.caricaSingolo(branoDTO.getAlbum().getId());
 
@@ -96,7 +96,7 @@ public class BranoController {
 		return ResponseEntity.ok(branoModificatoDTO);
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/admin/{id}")
 	public ResponseEntity<BranoDTO> deleteBrano(@PathVariable(value = "id") Long id) {
 		boolean includeAlbum = true;
 		Brano branoDaCancellare = branoService.caricaSingolo(id);

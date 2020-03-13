@@ -82,10 +82,10 @@ public class UtenteServiceImpl implements UtenteService {
 		
 		//se non è mai stata creata una sessione sul db
 		if (utenteLoggato.getSessione() == null) {
-			utenteLoggato.setSessione(new Sessione(SpootifyConstants.DURATA_MINUTI_SESSIONE));
+			utenteLoggato.setSessione(new Sessione());
 		}
 		else {
-			utenteLoggato.getSessione().refresh(SpootifyConstants.DURATA_MINUTI_SESSIONE);
+			utenteLoggato.getSessione().refresh();
 		}
 
 		sessioneService.aggiorna(utenteLoggato.getSessione());
@@ -201,12 +201,12 @@ public class UtenteServiceImpl implements UtenteService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public Utente caricaUtenteConSessioneValidaDaToken(String token) {
+	public Utente caricaUtenteAttivoConSessioneValidaDaToken(String token) {
 		if(token == null) {
 			return null;
 		}
-		Utente utente = repository.findUtenteWithValidSessionFromToken(token).orElse(null);
-		if(utente.getSessione().isValid()) {
+		Utente utente = repository.findActiveUserWithValidSessionFromToken(token).orElse(null);
+		if(utente != null && utente.getSessione() != null && utente.getSessione().isValid()) {
 			return utente;
 		}
 		

@@ -60,7 +60,7 @@ public class AlbumController {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token di autenticazione non presente nell'header");
 		}
 		
-		Utente utenteInSessione = utenteService.caricaUtenteConSessioneValidaDaToken(token);
+		Utente utenteInSessione = utenteService.caricaUtenteAttivoConSessioneValidaDaToken(token);
 		if (utenteInSessione == null) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token di autenticazione scaduto o non valido");
 		}
@@ -94,7 +94,7 @@ public class AlbumController {
 		return ResponseEntity.ok(albumDTO);
 	}
 
-	@PostMapping
+	@PostMapping("/admin/")
 	public ResponseEntity<AlbumDTO> insertAlbum(@RequestBody @Valid AlbumDTO albumDTO) {
 		boolean includeBrani = false;
 		Album albumModel = AlbumDTO.buildAlbumModelFromDTO(albumDTO, includeBrani, true);
@@ -109,7 +109,7 @@ public class AlbumController {
 		return ResponseEntity.ok(albumDTOInserito);
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/admin/{id}")
 	public ResponseEntity<AlbumDTO> updateAlbum(@PathVariable(value = "id") Long id, @RequestBody AlbumDTO albumDTO) {
 		albumDTO.setId(id);
 		boolean includeBrani = false;
@@ -120,7 +120,7 @@ public class AlbumController {
 		return ResponseEntity.ok(albumModificatoDTO);
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/admin/{id}")
 	public ResponseEntity<String> deleteAlbum(@PathVariable(value = "id") Long id) {
 		if (albumService.caricaSingolo(id) == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("id " + id + " non trovato");

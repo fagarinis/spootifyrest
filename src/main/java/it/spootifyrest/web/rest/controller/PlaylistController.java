@@ -62,7 +62,7 @@ public class PlaylistController {
 					"Token di autenticazione non presente nell'header");
 		}
 
-		Utente utenteInSessione = utenteService.caricaUtenteConSessioneValidaDaToken(token);
+		Utente utenteInSessione = utenteService.caricaUtenteAttivoConSessioneValidaDaToken(token);
 		if (utenteInSessione == null) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token di autenticazione scaduto o non valido");
 		}
@@ -101,7 +101,7 @@ public class PlaylistController {
 		return ResponseEntity.ok(playlistDTO);
 	}
 
-	@PostMapping
+	@PostMapping("/admin/")
 	public ResponseEntity<PlaylistDTO> insertPlaylist(@RequestBody @Valid PlaylistDTO playlistDTO) {
 		boolean includeBrani = true;
 		boolean includeUtente = true;
@@ -119,7 +119,7 @@ public class PlaylistController {
 		return ResponseEntity.ok(playlistDTOInserita);
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/admin/{id}")
 	public ResponseEntity<PlaylistDTO> updatePlaylist(@PathVariable(value = "id") Long id,
 			@RequestBody PlaylistDTO playlistDTO) {
 		playlistDTO.setId(id);
@@ -134,7 +134,7 @@ public class PlaylistController {
 		return ResponseEntity.ok(playlistModificataDTO);
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/admin/{id}")
 	public ResponseEntity<PlaylistDTO> deletePlaylist(@PathVariable(value = "id") Long id) {
 		boolean includeBrani = true;
 		boolean includeUtente = true;
