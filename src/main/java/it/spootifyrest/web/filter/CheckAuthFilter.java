@@ -10,7 +10,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import it.spootifyrest.model.Utente;
-import it.spootifyrest.model.constants.SpootifyConstants;
 import it.spootifyrest.service.SessioneService;
 import it.spootifyrest.service.UtenteService;
 //urlPattern non funziona, non filtra le request con solo quel path
@@ -29,7 +27,7 @@ import it.spootifyrest.service.UtenteService;
 public class CheckAuthFilter implements Filter {
 
 	private static final String HOME_PATH = "";
-	private static final String[] EXCLUDED_URLS = { "/auth/login", "/register", "/css/", "/js/" };
+	private static final String[] EXCLUDED_URLS = { "/auth/login","/auth/logout", "/register", "/css/", "/js/" };
 
 	// l'admin ha la creazione, modifica e cancellazione di album, artisti, brani. +
 	// gestione utenti
@@ -78,10 +76,10 @@ public class CheckAuthFilter implements Filter {
 
 			Utente utenteInSessione = getUtenteInSessione();
 
-			// FIXME togliere print successivamente...
-			System.out.println("filtro in azione su path " + pathAttuale);
-			System.out.println("token: " + getTokenFromRequest());
-			System.out.println("utente in sessione: " + utenteInSessione);
+			// Print di testing
+//			System.out.println("filtro in azione su path " + pathAttuale);
+//			System.out.println("token: " + getTokenFromRequest());
+//			System.out.println("utente in sessione: " + utenteInSessione);
 
 			if (utenteInSessione == null || utenteInSessione.getSessione() == null || utenteInSessione.getRuoli().size() == 0) {
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nessun utente in sessione valida");

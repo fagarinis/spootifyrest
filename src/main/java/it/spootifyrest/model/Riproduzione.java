@@ -87,7 +87,8 @@ public class Riproduzione {
 		List<Brano> listaBrani = getListaBrani();
 		Brano branoInRiproduzione = this.getBrano();
 
-		// FIXME i brani devono essere ordinati per id... ho messo il print per controllare
+		// FIXME i brani devono essere ordinati per id... ho messo il print per
+		// controllare
 		System.out.println("lista brani: " + listaBrani);
 
 		this.brano = prossimoBrano(listaBrani, branoInRiproduzione);
@@ -99,6 +100,19 @@ public class Riproduzione {
 			if (listaBrani.get(i).getId() == branoInRiproduzione.getId()) {
 				Brano prossimoBrano = listaBrani.get((i + 1) % listaBrani.size());
 				return prossimoBrano;
+			}
+		}
+		return null;
+	}
+
+	private Brano precedenteBrano(List<Brano> listaBrani, Brano branoInRiproduzione) {
+		for (int i = 0; i < listaBrani.size(); i++) {
+			if (listaBrani.get(i).getId() == branoInRiproduzione.getId()) {
+				if (i == 0) {
+					return listaBrani.get(listaBrani.size() - 1);
+				}
+				Brano precedenteBrano = listaBrani.get((i - 1));
+				return precedenteBrano;
 			}
 		}
 		return null;
@@ -117,6 +131,14 @@ public class Riproduzione {
 		}
 
 		return null;
+	}
+
+	public Brano previous() {
+		List<Brano> listaBrani = getListaBrani();
+		Brano branoInRiproduzione = this.getBrano();
+		this.brano = precedenteBrano(listaBrani, branoInRiproduzione);
+
+		return this.brano;
 	}
 
 }

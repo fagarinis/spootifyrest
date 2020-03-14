@@ -6,7 +6,6 @@ import java.util.Date;
 public class DateUtils {
 
 	private final static SimpleDateFormat sqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	private final static SimpleDateFormat fullCETDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss z");
 
 	/*

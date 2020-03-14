@@ -33,6 +33,10 @@ public class PlaylistDTO {
 	}
 
 	public static PlaylistDTO buildPlaylistDTOFromModel(Playlist source, boolean includeBrani, boolean includeUtente) {
+		if(source == null) {
+			return null;
+		}
+		
 		PlaylistDTO result = new PlaylistDTO();
 		result.setId(source.getId());
 		result.setTitoloPlaylist(source.getTitoloPlaylist());

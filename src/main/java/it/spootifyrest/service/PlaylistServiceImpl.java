@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.spootifyrest.model.Playlist;
+import it.spootifyrest.model.Utente;
 import it.spootifyrest.repository.PlaylistRepository;
 
 @Service
@@ -20,10 +21,10 @@ public class PlaylistServiceImpl implements PlaylistService {
 
 	@Autowired
 	private PlaylistRepository playlistRepository;
-	
+
 	@Autowired
 	private UtenteService utenteService;
-	
+
 	@Autowired
 	private BranoService branoService;
 
@@ -80,12 +81,45 @@ public class PlaylistServiceImpl implements PlaylistService {
 			query += " left join fetch p.utente ";
 
 		query += " where p.id = " + id + " ";
-		
+
 		try {
 			result = entityManager.createQuery(query, Playlist.class).getSingleResult();
 		} catch (NoResultException e) {
 		}
 		return result;
+	}
+
+	@Override
+	@Transactional
+	public Playlist aggiungiBranoAllaPlaylistDellUtente(Long idBrano, Long idPlaylist, Long idUtente) {
+		Playlist playlistPersist = this.caricaSingoloEager(idPlaylist, true, true);
+
+		if (playlistPersist == null || playlistPersist.getUtente().getId() != idUtente) {
+			return null;
+		}
+
+		playlistPersist.addBrano(branoService.caricaSingolo(idBrano));
+
+		return playlistPersist;
+	}
+
+	@Override
+	@Transactional
+	public Playlist rimuoviBranoDallaPlaylistDellUtente(Long idBrano, Long idPlaylist, Long idUtente) {
+		Playlist playlistPersist = this.caricaSingoloEager(idPlaylist, true, true);
+		if (playlistPersist.getUtente().getId() != idUtente) {
+			return null;
+		}
+
+		playlistPersist.removeBrano(branoService.caricaSingolo(idBrano));
+
+		return playlistPersist;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Playlist> findPlayListUtente(Utente utente) {
+		return playlistRepository.findAllPlaylistsByUtenteId(utente.getId());
 	}
 
 }

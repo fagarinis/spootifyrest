@@ -93,6 +93,10 @@ public class AlbumDTO {
 	}
 
 	public static AlbumDTO buildAlbumDTOFromModel(Album source, boolean includeBrani, boolean includeArtista) {
+		if (source == null) {
+			return null;
+		}
+
 		AlbumDTO result = new AlbumDTO();
 		result.setId(source.getId());
 		result.setNomeAlbum(source.getNomeAlbum());

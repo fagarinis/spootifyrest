@@ -9,10 +9,10 @@ import it.spootifyrest.model.Brano;
 
 public interface BranoRepository extends IBaseRepository<Brano> {
 
-	@Query("Select distinct b from Brano b left join fetch b.album a where b.id = ?1")
+	@Query("Select distinct b from Brano b left join fetch b.album a where b.id = ?1 ORDER BY b.id")
 	Optional<Brano> findByIdEager(Long id);
 
-	@Query("SELECT DISTINCT b FROM Brano b LEFT JOIN FETCH b.playlist p WHERE p.id = ?1")
+	@Query("SELECT DISTINCT b FROM Brano b LEFT JOIN FETCH b.playlist p WHERE p.id = ?1 ORDER BY b.id")
 	List<Brano> findAllByPlaylistId(Long idPlaylist);
 
 	@Query("SELECT b from Brano b left join b.riproduzioni r where r.playlist.id = ?1 and r.utente.id = ?2")

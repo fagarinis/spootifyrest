@@ -29,4 +29,6 @@ public interface UtenteService extends IBaseService<Utente> {
 
 	public Utente caricaUtenteAttivoConSessioneValidaDaToken(String token);
 
+	public Utente eseguiLogout(Utente utenteInSessione);
+
 }

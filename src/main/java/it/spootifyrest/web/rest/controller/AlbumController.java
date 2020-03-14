@@ -2,7 +2,6 @@ package it.spootifyrest.web.rest.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +15,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import it.spootifyrest.model.Album;
-import it.spootifyrest.model.Brano;
-import it.spootifyrest.model.Riproduzione;
-import it.spootifyrest.model.Utente;
 import it.spootifyrest.service.AlbumService;
 import it.spootifyrest.service.ArtistaService;
-import it.spootifyrest.service.RiproduzioneService;
-import it.spootifyrest.service.UtenteService;
 import it.spootifyrest.web.dto.album.AlbumDTO;
 import it.spootifyrest.web.dto.brano.BranoDTO;
+import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTO;
 
 @RestController
 @RequestMapping(value = "/albums")
@@ -38,15 +32,9 @@ public class AlbumController {
 
 	@Autowired
 	private ArtistaService artistaService;
-	
+
 	@Autowired
-	private UtenteService utenteService;
-	
-	@Autowired
-	private HttpServletRequest httpServletRequest;
-	
-	@Autowired
-	private RiproduzioneService riproduzioneService;
+	private RiproduzioneController riproduzioneController;
 
 	/**
 	 * @param id del brano
@@ -55,27 +43,24 @@ public class AlbumController {
 	 */
 	@GetMapping("/{id}/play")
 	public ResponseEntity<BranoDTO> play(@PathVariable(value = "id") Long id) {
-		String token = httpServletRequest.getHeader("token"); // ricevo il token per identificare l'utente
-		if (token == null) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token di autenticazione non presente nell'header");
-		}
-		
-		Utente utenteInSessione = utenteService.caricaUtenteAttivoConSessioneValidaDaToken(token);
-		if (utenteInSessione == null) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token di autenticazione scaduto o non valido");
-		}
-		if (albumService.caricaSingolo(id) == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "album con id "+ id+ " non trovato");
-		}
+		final boolean goNext = true;
+		final boolean isAlbum = true;
+		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
+	}
 
-		Riproduzione riproduzioneAggiornata = riproduzioneService.ascoltaProssimoBranoDaRaccolta(id,
-				utenteInSessione.getId(), true);
-		Brano prossimoBrano = riproduzioneAggiornata.getBrano();
-		BranoDTO prossimoBranoDTO = BranoDTO.buildBranoDTOFromModel(prossimoBrano, true);
-
-		return ResponseEntity.ok(prossimoBranoDTO);
+	@GetMapping("/{id}/playPrevious")
+	public ResponseEntity<BranoDTO> playPrevious(@PathVariable(value = "id") Long id) {
+		final boolean goNext = false;
+		final boolean isAlbum = true;
+		return riproduzioneController.handlePlayRaccolta(id, isAlbum, goNext);
 	}
 	
+	@GetMapping("/{id}/stop")
+	public ResponseEntity<RiproduzioneDTO> stopRiproduzione(@PathVariable(value = "id") Long id) {
+		final boolean isAlbum = true;
+		return riproduzioneController.handleStopPlayRaccolta(id, isAlbum);
+	}
+
 	@GetMapping
 	public ResponseEntity<List<AlbumDTO>> findByExample(AlbumDTO albumDTO) {
 

@@ -36,6 +36,10 @@ public class Sessione {
 	@MapsId
 	private Utente utente;
 
+	private String tokenGenerator() {
+		return UUID.randomUUID().toString();
+	}
+	
 	public Sessione() {
 		this(SpootifyConstants.DURATA_MINUTI_SESSIONE);
 	}
@@ -45,7 +49,7 @@ public class Sessione {
 		this.setDataInizioSessione(dataInizio);
 		Date dataFine = DateUtils.addMinutesToDate(durataMinuti, dataInizio);
 		this.setDataScadenzaSessione(dataFine);
-		this.setTokenDiAutenticazione(UUID.randomUUID().toString());
+		this.setNewTokenDiAutenticazione();
 	}
 
 	public Long getId() {
@@ -105,6 +109,21 @@ public class Sessione {
 	public boolean isValid() {
 		Date adesso = new Date();
 		return dataScadenzaSessione.after(adesso);
+	}
+
+	public String setNewTokenDiAutenticazione() {
+		String token = tokenGenerator();
+		this.setTokenDiAutenticazione(token);
+		return token;
+	}
+
+	public void termina() {
+		this.dataScadenzaSessione = new Date();
+	}
+
+	public void refreshConToken() {
+		this.refresh();
+		this.setNewTokenDiAutenticazione();
 	}
 
 }

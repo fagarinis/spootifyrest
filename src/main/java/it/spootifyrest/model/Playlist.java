@@ -87,4 +87,41 @@ public class Playlist {
 		return brani.get(0);
 	}
 
+	public void addBrano(Brano brano) {
+		if (!this.getBrani().contains(brano)) {
+		this.getBrani().add(brano);
+		brano.getPlaylist().add(this);
+		}
+	}
+
+	public void removeBrano(Brano brano) {
+		this.getBrani().remove(brano);
+		brano.getPlaylist().remove(this);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Playlist other = (Playlist) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
 }

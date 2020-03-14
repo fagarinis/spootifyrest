@@ -2,7 +2,6 @@ package it.spootifyrest.web.rest.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import it.spootifyrest.model.Brano;
 import it.spootifyrest.model.Playlist;
-import it.spootifyrest.model.Riproduzione;
-import it.spootifyrest.model.Utente;
 import it.spootifyrest.service.BranoService;
 import it.spootifyrest.service.PlaylistService;
-import it.spootifyrest.service.RiproduzioneService;
 import it.spootifyrest.service.UtenteService;
 import it.spootifyrest.web.dto.brano.BranoDTO;
 import it.spootifyrest.web.dto.playlist.PlaylistDTO;
+import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTO;
 import it.spootifyrest.web.dto.utente.UtenteDTO;
 
 @RestController
@@ -41,41 +37,29 @@ public class PlaylistController {
 	private UtenteService utenteService;
 
 	@Autowired
-	private RiproduzioneService riproduzioneService;
-
-	@Autowired
 	private BranoService branoService;
 
 	@Autowired
-	private HttpServletRequest httpServletRequest;
+	private RiproduzioneController riproduzioneController;
 
-	/**
-	 * @param id della playlist
-	 * @return l'ultimo brano della playlist riprodotto, il primo se non è ancora
-	 *         mai stato riprodotto
-	 */
 	@GetMapping("/{id}/play")
 	public ResponseEntity<BranoDTO> play(@PathVariable(value = "id") Long id) {
-		String token = httpServletRequest.getHeader("token"); // ricevo il token per identificare l'utente
-		if (token == null) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
-					"Token di autenticazione non presente nell'header");
-		}
+		final boolean goNext = true;
+		final boolean isAlbum = false;
+		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
+	}
 
-		Utente utenteInSessione = utenteService.caricaUtenteAttivoConSessioneValidaDaToken(token);
-		if (utenteInSessione == null) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token di autenticazione scaduto o non valido");
-		}
-		if (playlistService.caricaSingolo(id) == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "playlist con id " + id + " non trovata");
-		}
-
-		Riproduzione riproduzioneAggiornata = riproduzioneService.ascoltaProssimoBranoDaRaccolta(id,
-				utenteInSessione.getId(), false);
-		Brano prossimoBrano = riproduzioneAggiornata.getBrano();
-		BranoDTO prossimoBranoDTO = BranoDTO.buildBranoDTOFromModel(prossimoBrano, true);
-
-		return ResponseEntity.ok(prossimoBranoDTO);
+	@GetMapping("/{id}/playPrevious")
+	public ResponseEntity<BranoDTO> playPrevious(@PathVariable(value = "id") Long id) {
+		final boolean goNext = false;
+		final boolean isAlbum = false;
+		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
+	}
+	
+	@GetMapping("/{id}/stop")
+	public ResponseEntity<RiproduzioneDTO> stopRiproduzione(@PathVariable(value = "id") Long id) {
+		final boolean isAlbum = false;
+		return riproduzioneController.handleStopPlayRaccolta(id, isAlbum);
 	}
 
 	@GetMapping

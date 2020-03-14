@@ -151,7 +151,9 @@ public class Utente {
 
 	public void setSessione(Sessione sessione) {
 		this.sessione = sessione;
-		this.sessione.setUtente(this);
+		if (sessione != null) {
+			this.sessione.setUtente(this);
+		}
 	}
 
 	public List<Riproduzione> getRiproduzioni() {
