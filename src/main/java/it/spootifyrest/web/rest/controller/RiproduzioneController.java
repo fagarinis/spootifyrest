@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import it.spootifyrest.model.Album;
-import it.spootifyrest.model.Brano;
 import it.spootifyrest.model.Playlist;
 import it.spootifyrest.model.Riproduzione;
 import it.spootifyrest.model.Utente;
@@ -18,7 +17,6 @@ import it.spootifyrest.service.AlbumService;
 import it.spootifyrest.service.PlaylistService;
 import it.spootifyrest.service.RiproduzioneService;
 import it.spootifyrest.service.UtenteService;
-import it.spootifyrest.web.dto.brano.BranoDTO;
 import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTO;
 
 @RestController
@@ -83,8 +81,6 @@ public class RiproduzioneController {
 		Riproduzione riproduzioneAggiornata = riproduzioneService.ascoltaProssimoBranoDaRaccolta(idRaccolta,
 				utenteInSessione.getId(), isAlbum, goNextTrack);
 
-		Brano prossimoBrano = riproduzioneAggiornata.getBrano();
-		BranoDTO prossimoBranoDTO = BranoDTO.buildBranoDTOFromModel(prossimoBrano, true);
 		return ResponseEntity.ok(RiproduzioneDTO.buildRiproduzioneDTOFromModel(riproduzioneAggiornata));
 	}
 
