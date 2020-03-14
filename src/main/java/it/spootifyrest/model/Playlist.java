@@ -15,6 +15,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import it.spootifyrest.model.utils.SortedList;
+
 @Entity
 public class Playlist {
 
@@ -32,7 +34,7 @@ public class Playlist {
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
 	@JoinTable(name = "playlist_brano", joinColumns = @JoinColumn(name = "playlist_id", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "brano_id", referencedColumnName = "ID"))
-	private List<Brano> brani = new ArrayList<>();
+	private List<Brano> brani = new SortedList<>();
 
 	@Override
 	public String toString() {

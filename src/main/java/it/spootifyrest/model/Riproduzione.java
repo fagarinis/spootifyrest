@@ -87,10 +87,6 @@ public class Riproduzione {
 		List<Brano> listaBrani = getListaBrani();
 		Brano branoInRiproduzione = this.getBrano();
 
-		// FIXME i brani devono essere ordinati per id... ho messo il print per
-		// controllare
-		System.out.println("lista brani: " + listaBrani);
-
 		this.brano = prossimoBrano(listaBrani, branoInRiproduzione);
 		return this.brano;
 	}

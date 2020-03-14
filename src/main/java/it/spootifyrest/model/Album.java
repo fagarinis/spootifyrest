@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import it.spootifyrest.model.utils.SortedList;
+
 @Entity
 public class Album {
 
@@ -26,7 +28,7 @@ public class Album {
 	@JoinColumn(name = "artista_id")
 	private Artista artista;
 	@OneToMany(mappedBy = "album", orphanRemoval = true)
-	private List<Brano> brani = new ArrayList<>();
+	private List<Brano> brani = new SortedList<Brano>();
 	@OneToMany(mappedBy = "album", orphanRemoval = true)
 	private List<Riproduzione> riproduzioni = new ArrayList<>();
 

@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Brano {
+public class Brano implements Comparable<Brano> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,13 @@ public class Brano {
 
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "brani")
 	private List<Playlist> playlist = new ArrayList<>();
+
+	public Brano() {
+	}
+
+	public Brano(Long id) {
+		this.id = id;
+	}
 
 	public Long getId() {
 		return id;
@@ -99,6 +106,16 @@ public class Brano {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(Brano o) {
+		if (this.getId() < o.getId())
+			return -1;
+		if (this.getId() > o.getId())
+			return 1;
+
+		return 0;
 	}
 
 }

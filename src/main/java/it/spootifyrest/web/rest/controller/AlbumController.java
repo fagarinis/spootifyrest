@@ -42,17 +42,17 @@ public class AlbumController {
 	 *         mai stato riprodotto
 	 */
 	@GetMapping("/{id}/play")
-	public ResponseEntity<BranoDTO> play(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<RiproduzioneDTO> play(@PathVariable(value = "id") Long id) {
 		final boolean goNext = true;
 		final boolean isAlbum = true;
 		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 
 	@GetMapping("/{id}/playPrevious")
-	public ResponseEntity<BranoDTO> playPrevious(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<RiproduzioneDTO> playPrevious(@PathVariable(value = "id") Long id) {
 		final boolean goNext = false;
 		final boolean isAlbum = true;
-		return riproduzioneController.handlePlayRaccolta(id, isAlbum, goNext);
+		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 	
 	@GetMapping("/{id}/stop")

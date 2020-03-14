@@ -76,7 +76,7 @@ public class RiproduzioneController {
 	 * @param isAlbum     true se la raccolta è un album, false se è una playlist
 	 * @return la response con il brano in esecuzione al momento
 	 */
-	ResponseEntity<BranoDTO> handlePlayRaccolta(long idRaccolta, boolean goNextTrack, boolean isAlbum) {
+	ResponseEntity<RiproduzioneDTO> handlePlayRaccolta(long idRaccolta, boolean goNextTrack, boolean isAlbum) {
 		Utente utenteInSessione = getUtenteInSessione();
 		lanciaErroreSeRaccoltaInesistenteOVuota(idRaccolta, isAlbum);
 
@@ -85,7 +85,7 @@ public class RiproduzioneController {
 
 		Brano prossimoBrano = riproduzioneAggiornata.getBrano();
 		BranoDTO prossimoBranoDTO = BranoDTO.buildBranoDTOFromModel(prossimoBrano, true);
-		return ResponseEntity.ok(prossimoBranoDTO);
+		return ResponseEntity.ok(RiproduzioneDTO.buildRiproduzioneDTOFromModel(riproduzioneAggiornata));
 	}
 
 	ResponseEntity<RiproduzioneDTO> handleStopPlayRaccolta(Long idRaccolta, boolean isAlbum) {
