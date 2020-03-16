@@ -6,8 +6,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,10 +26,10 @@ public class LoginController {
 
 	@Autowired
 	private UtenteService utenteService;
-	
+
 	@Autowired
 	private HttpServletRequest httpServletRequest;
-	
+
 	private String getTokenFromRequest() {
 		String token = httpServletRequest.getHeader("token");
 		if (token == null) {
@@ -46,8 +46,6 @@ public class LoginController {
 		}
 		return utenteInSessione;
 	}
-	
-	
 
 	@PostMapping("/auth/login")
 	public ResponseEntity<UtenteDTO> eseguiLogin(@RequestBody UtenteDTORegistrazione utenteDTOInput) {
@@ -62,15 +60,15 @@ public class LoginController {
 		utenteLoggatoDTO.setTokenDiAutenticazione(utenteLoggato.getSessione().getTokenDiAutenticazione());
 		return ResponseEntity.ok(utenteLoggatoDTO);
 	}
-	
-	@GetMapping("/auth/logout")
+
+	@PutMapping("/auth/logout")
 	public ResponseEntity<UtenteDTO> eseguiLogout() {
-		
+
 		Utente utenteLogout = utenteService.eseguiLogout(getUtenteInSessione());
 		if (utenteLogout == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "logout fallito");
 		}
-		
+
 		UtenteDTO utenteLogoutDTO = UtenteDTO.buildUtenteDTOFromModel(utenteLogout, true);
 
 		return ResponseEntity.ok(utenteLogoutDTO);
