@@ -20,7 +20,6 @@ import it.spootifyrest.model.Album;
 import it.spootifyrest.service.AlbumService;
 import it.spootifyrest.service.ArtistaService;
 import it.spootifyrest.web.dto.album.AlbumDTO;
-import it.spootifyrest.web.dto.brano.BranoDTO;
 import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTO;
 
 @RestController
@@ -41,21 +40,21 @@ public class AlbumController {
 	 * @return l'ultimo brano della playlist riprodotto, il primo se non è ancora
 	 *         mai stato riprodotto
 	 */
-	@GetMapping("/{id}/play")
+	@PostMapping("/{id}/play")
 	public ResponseEntity<RiproduzioneDTO> play(@PathVariable(value = "id") Long id) {
 		final boolean goNext = true;
 		final boolean isAlbum = true;
 		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 
-	@GetMapping("/{id}/playPrevious")
+	@PostMapping("/{id}/playPrevious")
 	public ResponseEntity<RiproduzioneDTO> playPrevious(@PathVariable(value = "id") Long id) {
 		final boolean goNext = false;
 		final boolean isAlbum = true;
 		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 	
-	@GetMapping("/{id}/stop")
+	@DeleteMapping("/{id}/stop")
 	public ResponseEntity<RiproduzioneDTO> stopRiproduzione(@PathVariable(value = "id") Long id) {
 		final boolean isAlbum = true;
 		return riproduzioneController.handleStopPlayRaccolta(id, isAlbum);

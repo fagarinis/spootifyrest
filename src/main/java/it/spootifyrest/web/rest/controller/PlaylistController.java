@@ -42,21 +42,21 @@ public class PlaylistController {
 	@Autowired
 	private RiproduzioneController riproduzioneController;
 
-	@GetMapping("/{id}/play")
+	@PostMapping("/{id}/play")
 	public ResponseEntity<RiproduzioneDTO> play(@PathVariable(value = "id") Long id) {
 		final boolean goNext = true;
 		final boolean isAlbum = false;
 		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 
-	@GetMapping("/{id}/playPrevious")
+	@PostMapping("/{id}/playPrevious")
 	public ResponseEntity<RiproduzioneDTO> playPrevious(@PathVariable(value = "id") Long id) {
 		final boolean goNext = false;
 		final boolean isAlbum = false;
 		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 
-	@GetMapping("/{id}/stop")
+	@DeleteMapping("/{id}/stop")
 	public ResponseEntity<RiproduzioneDTO> stopRiproduzione(@PathVariable(value = "id") Long id) {
 		final boolean isAlbum = false;
 		return riproduzioneController.handleStopPlayRaccolta(id, isAlbum);
