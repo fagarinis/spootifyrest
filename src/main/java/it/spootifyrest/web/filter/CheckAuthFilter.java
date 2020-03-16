@@ -20,14 +20,16 @@ import org.springframework.web.server.ResponseStatusException;
 import it.spootifyrest.model.Utente;
 import it.spootifyrest.service.SessioneService;
 import it.spootifyrest.service.UtenteService;
+
 //urlPattern non funziona, non filtra le request con solo quel path
 @WebFilter(filterName = "CheckAuthFilter", urlPatterns = { "/*" })
 @Component
 @Order(1)
 public class CheckAuthFilter implements Filter {
 
-	private static final String HOME_PATH = "";
-	private static final String[] EXCLUDED_URLS = { "/auth/login","/auth/logout", "/register", "/css/", "/js/" };
+	private static final String HOME_PATH = "/";
+	private static final String[] EXCLUDED_URLS = { "index.html", "/auth/login", "/auth/logout", "/register", "/css/",
+			"/js/", "favicon.ico" };
 
 	// l'admin ha la creazione, modifica e cancellazione di album, artisti, brani. +
 	// gestione utenti
@@ -36,7 +38,7 @@ public class CheckAuthFilter implements Filter {
 //	Creare, rinominare e cancellare una playlist e gestire i brani al suo interno (aggiungi/rimuovi).
 //	Avviare una riproduzione a partire da una playlist o un album, potendo andare avanti, indietro o
 //	bloccare la riproduzione.
-	private static final String[] PROTECTED_URLS_CUSTOMER = { "/playlists/","/myPlaylists/" };
+	private static final String[] PROTECTED_URLS_CUSTOMER = { "/player", "/playlists/", "/myPlaylists/" };
 
 	@Autowired
 	private HttpServletRequest httpServletRequest;
@@ -72,6 +74,8 @@ public class CheckAuthFilter implements Filter {
 
 		// prendo il path della request che sta passando in questo momento
 		String pathAttuale = httpServletRequest.getServletPath();
+		System.out.println(pathAttuale);
+
 		if (!isPathInWhiteList(pathAttuale)) {
 
 			Utente utenteInSessione = getUtenteInSessione();
@@ -81,7 +85,7 @@ public class CheckAuthFilter implements Filter {
 //			System.out.println("token: " + getTokenFromRequest());
 //			System.out.println("utente in sessione: " + utenteInSessione);
 
-			if (utenteInSessione == null || utenteInSessione.getSessione() == null || utenteInSessione.getRuoli().size() == 0) {
+			if (utenteInSessione == null || utenteInSessione.getSessione() == null) {
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nessun utente in sessione valida");
 			}
 			if (utenteInSessione.getRuoli().size() == 0) {
@@ -97,11 +101,11 @@ public class CheckAuthFilter implements Filter {
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utente non autorizzato all'area customer");
 			}
 
-			//refresha la sessione dell'utente per ogni chiamata che fa
+			// refresha la sessione dell'utente per ogni chiamata che fa
 			utenteInSessione.getSessione().refresh();
 			sessioneService.aggiorna(utenteInSessione.getSessione());
 		}
-		
+
 		chain.doFilter(request, response);
 	}
 

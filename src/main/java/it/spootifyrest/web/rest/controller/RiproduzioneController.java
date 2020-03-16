@@ -1,10 +1,13 @@
 package it.spootifyrest.web.rest.controller;
 
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,12 +21,16 @@ import it.spootifyrest.service.PlaylistService;
 import it.spootifyrest.service.RiproduzioneService;
 import it.spootifyrest.service.UtenteService;
 import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTO;
+import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTOJson;
 
 @RestController
 @RequestMapping(value = "/player")
 /**
  * questo controller è un supporto per altri controller e non viene mai chiamato
  * direttamente pertanto non è in whitelist nel CheckAuthFilter
+ * 
+ * FIXME togliere l'autowired di riproduzionecontroller da album e playlist e creando un bean di utility
+ * 
  */
 public class RiproduzioneController {
 
@@ -59,6 +66,22 @@ public class RiproduzioneController {
 		return utenteInSessione;
 	}
 
+	/**
+	 * Chiamata ajax
+	 * @return riproduzione con lista dei brani e brano in ascolto attuale
+	 */
+	@PostMapping("/{tipoRaccolta}/{idRaccolta}")
+	public ResponseEntity<RiproduzioneDTOJson> caricaRiproduzione(
+			@PathVariable(value = "tipoRaccolta") String tipoRaccolta, 
+			@PathVariable(value = "idRaccolta") Long idRaccolta) {
+		
+		boolean isAlbum = tipoRaccolta.equals("album")? true : false;
+		Riproduzione resultModel = riproduzioneService.caricaRiproduzioneDaIdRaccoltaEToken(idRaccolta, isAlbum, getTokenFromRequest());
+		RiproduzioneDTOJson resultDTO = RiproduzioneDTOJson.buildRiproduzioneDTOFromModel(resultModel);
+
+		return ResponseEntity.ok(resultDTO);
+	}
+	
 	/**
 	 * tale metodo non viene mai chiamato direttamente ma solo attraverso
 	 * AlbumController o PlaylistController (classi nello stesso package).

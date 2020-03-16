@@ -3,12 +3,12 @@ package it.spootifyrest.web.dto.riproduzione;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import it.spootifyrest.model.Riproduzione;
-import it.spootifyrest.web.dto.album.AlbumDTO;
+import it.spootifyrest.web.dto.album.AlbumDTOJson;
 import it.spootifyrest.web.dto.brano.BranoDTO;
-import it.spootifyrest.web.dto.playlist.PlaylistDTO;
+import it.spootifyrest.web.dto.playlist.PlaylistDTOJson;
 import it.spootifyrest.web.dto.utente.UtenteDTO;
 
-public class RiproduzioneDTO {
+public class RiproduzioneDTOJson {
 	private Long id;
 
 	@JsonIgnoreProperties(value = { "ruoli" })
@@ -19,17 +19,17 @@ public class RiproduzioneDTO {
 
 	// In qualsiasi momento solo uno dei due è valorizzato!
 	@JsonIgnoreProperties(value = { "artista",  })
-	private AlbumDTO album;
-	@JsonIgnoreProperties(value = { "utente",  })
-	private PlaylistDTO playlist;
+	private AlbumDTOJson album;
+	//@JsonIgnoreProperties(value = { "utente",  })
+	private PlaylistDTOJson playlist;
 
-	public static RiproduzioneDTO buildRiproduzioneDTOFromModel(Riproduzione source) {
-		RiproduzioneDTO result = new RiproduzioneDTO();
+	public static RiproduzioneDTOJson buildRiproduzioneDTOFromModel(Riproduzione source) {
+		RiproduzioneDTOJson result = new RiproduzioneDTOJson();
 		result.setId(source.getId());
 		result.setUtente(UtenteDTO.buildUtenteDTOFromModel(source.getUtente(), false));
 		result.setBrano(BranoDTO.buildBranoDTOFromModel(source.getBrano(), false));
-		result.setAlbum(AlbumDTO.buildAlbumDTOFromModel(source.getAlbum(), true, false));
-		result.setPlaylist(PlaylistDTO.buildPlaylistDTOFromModel(source.getPlaylist(), true, false));
+		result.setAlbum(AlbumDTOJson.buildAlbumDTOFromModel(source.getAlbum(), true, false));
+		result.setPlaylist(PlaylistDTOJson.buildPlaylistDTOFromModel(source.getPlaylist(), true, true));
 		return result;
 	}
 
@@ -57,20 +57,19 @@ public class RiproduzioneDTO {
 		this.brano = brano;
 	}
 
-	public AlbumDTO getAlbum() {
+	public AlbumDTOJson getAlbum() {
 		return album;
 	}
 
-	public void setAlbum(AlbumDTO album) {
+	public void setAlbum(AlbumDTOJson album) {
 		this.album = album;
 	}
 
-	public PlaylistDTO getPlaylist() {
+	public PlaylistDTOJson getPlaylist() {
 		return playlist;
 	}
 
-	public void setPlaylist(PlaylistDTO playlist) {
+	public void setPlaylist(PlaylistDTOJson playlist) {
 		this.playlist = playlist;
 	}
-
 }

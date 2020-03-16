@@ -12,4 +12,6 @@ public interface RiproduzioneService extends IBaseService<Riproduzione> {
 
 	public Riproduzione eliminaRiproduzione(Long idRaccolta, Long idUtente, boolean isAlbum);
 
+	public Riproduzione caricaRiproduzioneDaIdRaccoltaEToken(Long idRaccolta, boolean isAlbum, String token);
+
 }

@@ -6,12 +6,14 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
 import it.spootifyrest.model.Utente;
 import it.spootifyrest.model.en.CodiceRuolo;
@@ -46,7 +48,12 @@ public class LoginController {
 		}
 		return utenteInSessione;
 	}
-
+	
+	@GetMapping("/")
+	public ModelAndView index() {
+	    return new ModelAndView("index.html");
+	}
+	
 	@PostMapping("/auth/login")
 	public ResponseEntity<UtenteDTO> eseguiLogin(@RequestBody UtenteDTORegistrazione utenteDTOInput) {
 		boolean includeRuoli = true;
@@ -77,7 +84,6 @@ public class LoginController {
 	@PostMapping("/register")
 	public ResponseEntity<UtenteDTO> registraNuovoUtenteCustomer(
 			@RequestBody @Valid UtenteDTORegistrazione utenteDTORegistrazione) {
-
 		Utente utenteModel = UtenteDTORegistrazione.buildUtenteModelFromDTO(utenteDTORegistrazione);
 		Utente utenteRegistrato = utenteService.registraUtente(utenteModel, CodiceRuolo.CUSTOMER_ROLE);
 		if (utenteRegistrato == null) {

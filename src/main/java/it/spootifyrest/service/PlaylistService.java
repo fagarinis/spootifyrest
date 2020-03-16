@@ -7,6 +7,8 @@ import it.spootifyrest.model.Utente;
 
 public interface PlaylistService extends IBaseService<Playlist> {
 
+	public Playlist caricaSingoloEager(Long id, boolean includeBrani, boolean includeUtente, boolean includeAlbumBrani, boolean includeArtistaAlbum);
+	
 	public Playlist caricaSingoloEager(Long id, boolean includeBrani, boolean includeUtente);
 	
 	public Playlist aggiungiBranoAllaPlaylistDellUtente(Long idBrano, Long idPlaylist, Long idUtente);

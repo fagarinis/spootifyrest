@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Spootify Rest</title>
+
+<!-- Bootstrap -->
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<!-- Custom styles for this template -->
+<link href="/css/signin.css" rel="stylesheet">
+<link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico" type="image/x-icon" />
+</head>
+<body class="text-center">
+	<div class="container">
+			<h1 class="h3 mb-3 font-weight-normal">&#128522 &#127925;Spootify&#127925; &#128522</h1>
+	    <form class="form-signin" onsubmit="return riproduci() && false" action ="" method ="post" id ="formId">
+	<!--       <img class="mb-4" src="../../assets/brand/bootstrap-solid.svg" alt="" width="72" height="72"> -->
+	      
+	      <label for="inputTokenId" class="sr-only">Token</label>
+	      	<input type="text" name="inputToken" id="inputTokenId" class="form-control" placeholder="Token di autenticazione"  autofocus>
+	     <br> <label for="inputAlbumId" class="sr-only">Album ID</label>
+	      	<input type="number" name="inputAlbum" id="inputAlbumId" class="form-control" placeholder="Album ID">
+	      <label for="inputPlaylistId" class="sr-only">Playlist ID</label>
+	      	<input type="number" name="inputPlaylist" id="inputPlaylistId" class="form-control" placeholder="Playlist ID">
+	      
+	      <button class="btn btn-lg btn-primary btn-block" type="submit">Riproduci</button>
+	      
+	      
+	
+	      
+	      
+	      <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
+	    </form>
+	    
+	    <table class="table table-striped" id ="songsTableId">
+			<thead>
+			</thead>
+			
+			<tbody>
+			</tbody>
+		</table>
+		
+		<div class="btn-group" id="playerGroupButtonId" style="display: none">
+			<button onclick ="changeTrack(false)"class="btn btn-sm btn-primary " type="submit">Previous</button> 
+			<button onclick ="cancellaRiproduzione()" class="btn btn-sm btn-primary " type="submit">Cancella Riproduzione</button> 
+			<button onclick ="indietro()" class="btn btn-sm btn-primary " type="submit">Indietro</button> 
+		 	<button onclick ="changeTrack(true)" class="btn btn-sm btn-primary " type="submit">Next</button>
+		</div>
+    </div>
+  </body>
+  
+ <script type="text/javascript">
+ 
+ 	function changeTrack(next){
+ 		$.ajaxSetup({
+		    headers: {
+		        'Content-Type': 'application/json',
+		        'Accept': 'application/json',
+		        "token": getTokenFromForm()
+		    }
+		});
+ 		
+ 		var [raccoltaId, isAlbum] = getRaccolta();
+ 		var path = "";
+ 		if(isAlbum){
+ 			path += "albums/";
+ 		}
+ 		else{
+ 			path += "playlists/";
+ 		}
+ 		path += raccoltaId;
+ 		if(next){
+ 			path += "/play";
+ 		}
+ 		else{
+ 			path += "/playPrevious";
+ 		}
+ 		
+ 		$.ajax({
+			  url: path,
+			  type:'POST',
+			 // headers: { 					altrimenti dovevo settare il token
+			//        'token': token},
+			  context: document.body
+			}).success(function() {
+				console.log("brano cambiato");
+				riproduci();
+			});
+ 		
+ 		
+ 	}
+ 
+ 	function indietro(){
+ 		showPlayer(false);
+ 		return true;
+ 	}
+ 
+ 	function cancellaRiproduzione(){
+ 		$.ajaxSetup({
+		    headers: {
+		        'Content-Type': 'application/json',
+		        'Accept': 'application/json',
+		        "token": getTokenFromForm()
+		    }
+		});
+ 		
+ 		var [raccoltaId, isAlbum] = getRaccolta();
+ 		var path = "";
+ 		if(isAlbum){
+ 			path += "albums/";
+ 		}
+ 		else{
+ 			path += "playlists/";
+ 		}
+ 		path += raccoltaId+"/stop";
+ 		
+ 		$.ajax({
+			  url: path,
+			  type:'DELETE',
+			 // headers: { 					altrimenti dovevo settare il token
+			//        'token': token},
+			  context: document.body
+			}).success(function() {
+				console.log("riproduzione cancellata");
+				showPlayer(false);
+			});
+ 	}
+ 
+ 
+ 	function showPlayer(show){
+ 		if(show){
+ 			$("#formId").hide();
+ 			$("#songsTableId").show();
+ 			$("#playerGroupButtonId").show();
+ 		}
+ 		else{
+ 			$("#playerGroupButtonId").hide() ;
+ 			$("#songsTableId").hide();
+ 			$("#formId").show();
+ 		}
+ 	}
+ 
+ 	function getTokenFromForm(){
+ 		return $("#inputTokenId").val();
+ 	}
+ 	
+	function riproduci(){
+		tagToken = $("#inputTokenId");
+		token = tagToken.val();
+		
+		tagAlbum = $("#inputAlbumId");
+		albumId = tagAlbum.val();
+		
+		tagPlaylist = $("#inputPlaylistId");
+		playlistId = tagPlaylist.val();
+		
+		if(!xorNull(albumId, playlistId)){
+			console.log("Errore Input: i form di album e playlist sono entrambi vuoti o entrambi valorizzati");
+			return false;
+		}
+		
+		var [raccoltaId, isAlbum] = getRaccolta();
+		var tipoRaccolta = isAlbum? "album" : "playlist";
+		
+		//console.log("token "+ token,"\n idAlbum:"+ albumId,"\n idPlaylist: "+ playlistId);
+		
+		var urlPath = "/player/"+tipoRaccolta+"/"+raccoltaId;
+		
+		//questo per settare le chiamate ajax successive
+		$.ajaxSetup({
+		    headers: {
+		        'Content-Type': 'application/json',
+		        'Accept': 'application/json',
+		        "token": token
+		    }
+		});
+		
+		var result = $.ajax({
+			  url: urlPath,
+			  type:'POST',
+			 // headers: { 					altrimenti dovevo settare il token
+			//        'token': token},
+			  context: document.body
+			}).success(function() {
+				//console.log("riproduzione caricata");
+				//console.log(result.responseJSON);
+				buildSongsTable(result.responseJSON);
+			});
+		
+		//var result2 = $.post(urlPath,   // url
+			//       {  }, // data to be submit
+			  //     function(data, status, jqXHR) {// success callback
+			    //            console.log("success");
+			    //    }).fail(function(){
+			    //    		console.log("fallito");
+			    //     }).done(function(){});
+		
+		return false;
+	}
+	
+	
+function xorNull(A,B) {
+	var a = !isBlank(A);
+	var b = !isBlank(B);
+		
+	return ( a || b ) && !( a && b );
+}
+
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
+}
+
+function getRaccolta(){
+	tagPlaylist = $("#inputPlaylistId");
+	playlistId = $("#inputPlaylistId").val();
+	
+	if(!isBlank(albumId)){
+		return [albumId, true];
+	}else{
+		return [playlistId, false];
+	}
+	
+}
+
+function buildSongsTable(json){
+	var table = $("#songsTableId");
+	table.empty();
+	
+	var tipoRaccolta = json["playlist"] == null? "album" : "playlist";
+	var idBranoInAscolto = json["brano"].id;
+	
+	var listaBrani = json[tipoRaccolta]["brani"];
+	
+	var tableHead = "<th> ";
+	if(tipoRaccolta == "album"){
+		tableHead += json["album"].nomeAlbum +" ("+json["album"].annoDiUscita+ ")";
+	} else if(tipoRaccolta == "playlist"){
+		tableHead += json["playlist"].titoloPlaylist +" ("+json["playlist"]["utente"].username+ ")";
+	}
+	
+	tableHead += " <th>";
+	table.append(tableHead)
+	
+	for(var i = 0; i < listaBrani.length; i++){
+		id = listaBrani[i].id
+		titolo = listaBrani[i].titoloBrano
+		album = listaBrani[i]["album"].nomeAlbum;
+		artista = listaBrani[i]["album"]["artista"].nome +" "+ listaBrani[i]["album"]["artista"].cognome;
+		
+		var tableRow ="<tr><td>";
+		if(id == idBranoInAscolto){
+			tableRow += " <b>&#9658;";
+		}
+		
+		tableRow += titolo + ", " + album + ", " + artista + "</td></tr>";
+		
+		if(id == idBranoInAscolto){
+			tableRow += " </b>";
+		}
+		tableRow += "</td></tr>"
+		table.append(tableRow);
+	}
+	
+	showPlayer(true);
+}
+
+
+</script>
+</html>
+
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/bootstrap.bundle.js"></script>
+

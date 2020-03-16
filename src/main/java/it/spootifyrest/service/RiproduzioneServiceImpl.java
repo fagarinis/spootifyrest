@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import it.spootifyrest.model.Album;
 import it.spootifyrest.model.Playlist;
 import it.spootifyrest.model.Riproduzione;
+import it.spootifyrest.model.Utente;
 import it.spootifyrest.repository.RiproduzioneRepository;
 
 @Service
@@ -71,7 +72,7 @@ public class RiproduzioneServiceImpl implements RiproduzioneService {
 	 *         (dell'eventuale album o playlist)
 	 */
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Riproduzione inizializzaNuovaRiproduzioneDaIdRaccoltaEUserId(Long idRaccolta, Long idUtente,
 			boolean isAlbum) {
 		Riproduzione nuovaRiproduzione = new Riproduzione();
@@ -81,11 +82,13 @@ public class RiproduzioneServiceImpl implements RiproduzioneService {
 			nuovaRiproduzione.setAlbum(albumInRiproduzione);
 			nuovaRiproduzione.setBrano(albumInRiproduzione.getPrimoBrano());
 		} else {
-			Playlist playlistInRiproduzione = playlistService.caricaSingoloEager(idRaccolta, true, false);
+			Playlist playlistInRiproduzione = playlistService.caricaSingoloEager(idRaccolta, true, true, true, true);
 			nuovaRiproduzione.setPlaylist(playlistInRiproduzione);
 			nuovaRiproduzione.setBrano(playlistInRiproduzione.getPrimoBrano());
 		}
 
+		inserisciNuovo(nuovaRiproduzione);
+		
 		return nuovaRiproduzione;
 	}
 
@@ -106,6 +109,18 @@ public class RiproduzioneServiceImpl implements RiproduzioneService {
 		}
 
 		return riproduzionePersist;
+	}
+	
+	@Override
+	@Transactional
+	public Riproduzione caricaRiproduzioneDaIdRaccoltaEToken(Long idRaccolta, boolean isAlbum, String token) {
+		Utente utenteInSessione = utenteService.caricaUtenteAttivoConSessioneValidaDaToken(token);
+		Riproduzione riproduzioneAttiva = caricaRiproduzioneDaIdRaccoltaEUserId(idRaccolta, utenteInSessione.getId(), isAlbum);;
+		if(riproduzioneAttiva != null) {
+			return riproduzioneAttiva;
+		}
+		
+		return inizializzaNuovaRiproduzioneDaIdRaccoltaEUserId(idRaccolta, utenteInSessione.getId(), isAlbum);
 	}
 
 	/**

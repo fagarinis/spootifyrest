@@ -72,6 +72,33 @@ public class PlaylistServiceImpl implements PlaylistService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public Playlist caricaSingoloEager(Long id, boolean includeBrani, boolean includeUtente, boolean includeAlbumBrani,
+			boolean includeArtistaAlbum) {
+		Playlist result = null;
+		String query = "select p from Playlist p ";
+		if (includeBrani) {
+			query += " left join fetch p.brani b ";
+			if (includeAlbumBrani) {
+				query += " left join fetch b.album alb ";
+				if (includeArtistaAlbum) {
+					query += " left join fetch alb.artista ";
+				}
+			}
+		}
+		if (includeUtente)
+			query += " left join fetch p.utente ";
+
+		query += " where p.id = " + id + " ";
+
+		try {
+			result = entityManager.createQuery(query, Playlist.class).getSingleResult();
+		} catch (NoResultException e) {
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public Playlist caricaSingoloEager(Long id, boolean includeBrani, boolean includeUtente) {
 		Playlist result = null;
 		String query = "select p from Playlist p ";
