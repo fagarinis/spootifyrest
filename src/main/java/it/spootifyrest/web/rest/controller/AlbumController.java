@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.spootifyrest.model.Album;
+import it.spootifyrest.model.utils.RiproduzioneUtils;
 import it.spootifyrest.service.AlbumService;
 import it.spootifyrest.service.ArtistaService;
 import it.spootifyrest.web.dto.album.AlbumDTO;
@@ -33,7 +34,7 @@ public class AlbumController {
 	private ArtistaService artistaService;
 
 	@Autowired
-	private RiproduzioneController riproduzioneController;
+	private RiproduzioneUtils riproduzioneUtils;
 
 	/**
 	 * @param id del brano
@@ -44,20 +45,20 @@ public class AlbumController {
 	public ResponseEntity<RiproduzioneDTO> play(@PathVariable(value = "id") Long id) {
 		final boolean goNext = true;
 		final boolean isAlbum = true;
-		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
+		return riproduzioneUtils.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 
 	@PostMapping("/{id}/playPrevious")
 	public ResponseEntity<RiproduzioneDTO> playPrevious(@PathVariable(value = "id") Long id) {
 		final boolean goNext = false;
 		final boolean isAlbum = true;
-		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
+		return riproduzioneUtils.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 	
 	@DeleteMapping("/{id}/stop")
 	public ResponseEntity<RiproduzioneDTO> stopRiproduzione(@PathVariable(value = "id") Long id) {
 		final boolean isAlbum = true;
-		return riproduzioneController.handleStopPlayRaccolta(id, isAlbum);
+		return riproduzioneUtils.handleStopPlayRaccolta(id, isAlbum);
 	}
 
 	@GetMapping

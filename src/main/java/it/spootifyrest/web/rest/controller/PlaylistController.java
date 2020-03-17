@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import it.spootifyrest.model.Playlist;
+import it.spootifyrest.model.utils.RiproduzioneUtils;
 import it.spootifyrest.service.BranoService;
 import it.spootifyrest.service.PlaylistService;
 import it.spootifyrest.service.UtenteService;
@@ -40,26 +41,26 @@ public class PlaylistController {
 	private BranoService branoService;
 
 	@Autowired
-	private RiproduzioneController riproduzioneController;
+	private RiproduzioneUtils riproduzioneUtils;
 
 	@PostMapping("/{id}/play")
 	public ResponseEntity<RiproduzioneDTO> play(@PathVariable(value = "id") Long id) {
 		final boolean goNext = true;
 		final boolean isAlbum = false;
-		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
+		return riproduzioneUtils.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 
 	@PostMapping("/{id}/playPrevious")
 	public ResponseEntity<RiproduzioneDTO> playPrevious(@PathVariable(value = "id") Long id) {
 		final boolean goNext = false;
 		final boolean isAlbum = false;
-		return riproduzioneController.handlePlayRaccolta(id, goNext, isAlbum);
+		return riproduzioneUtils.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 
 	@DeleteMapping("/{id}/stop")
 	public ResponseEntity<RiproduzioneDTO> stopRiproduzione(@PathVariable(value = "id") Long id) {
 		final boolean isAlbum = false;
-		return riproduzioneController.handleStopPlayRaccolta(id, isAlbum);
+		return riproduzioneUtils.handleStopPlayRaccolta(id, isAlbum);
 	}
 
 	@GetMapping
