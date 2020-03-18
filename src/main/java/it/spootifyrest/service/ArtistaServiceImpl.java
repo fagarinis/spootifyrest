@@ -9,6 +9,7 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.spootifyrest.model.Album;
 import it.spootifyrest.model.Artista;
 import it.spootifyrest.repository.ArtistaRepository;
 
@@ -17,6 +18,9 @@ public class ArtistaServiceImpl implements ArtistaService {
 
 	@Autowired
 	private ArtistaRepository artistaRepository;
+	
+	@Autowired
+	private AlbumService albumService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -45,6 +49,10 @@ public class ArtistaServiceImpl implements ArtistaService {
 	@Override
 	@Transactional
 	public void rimuovi(Artista o) {
+		for(Album albumItem : o.getAlbum()) {
+			albumService.rimuovi(albumItem);
+		}
+		
 		artistaRepository.delete(o);
 	}
 

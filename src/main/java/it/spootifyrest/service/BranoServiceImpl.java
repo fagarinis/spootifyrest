@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.spootifyrest.model.Brano;
+import it.spootifyrest.model.Playlist;
 import it.spootifyrest.repository.BranoRepository;
 
 @Service
@@ -50,6 +51,11 @@ public class BranoServiceImpl implements BranoService {
 	@Override
 	@Transactional
 	public void rimuovi(Brano o) {
+		//rimuovo il brano da tutte le playlist in cui è presente
+		for(Playlist playlistItem : o.getPlaylist()) {
+			playlistItem.getBrani().remove(o);
+		}
+		
 		branoRepository.delete(o);
 	}
 
@@ -82,6 +88,12 @@ public class BranoServiceImpl implements BranoService {
 		}
 
 		return entityManager.createQuery(query, Brano.class).getResultList();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Brano caricaSingoloEagerConAlbumEPlaylists(Long id) {
+		return branoRepository.findByIdEagerIncludeAlbumAndPlaylists(id).orElse(null);
 	}
 
 }

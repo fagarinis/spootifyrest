@@ -108,5 +108,10 @@ public class Album {
 
 		return brani.get(0);
 	}
+	
+	public void removeBrano(Brano brano) {
+		this.getBrani().remove(brano);
+		brano.setAlbum(null);
+	}
 
 }

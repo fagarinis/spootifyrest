@@ -11,6 +11,9 @@ public interface BranoRepository extends IBaseRepository<Brano> {
 
 	@Query("Select distinct b from Brano b left join fetch b.album a where b.id = ?1 ORDER BY b.id")
 	Optional<Brano> findByIdEager(Long id);
+	
+	@Query("SELECT b from Brano b left join fetch b.album left join fetch b.playlist where b.id = ?1")
+	Optional<Brano> findByIdEagerIncludeAlbumAndPlaylists(Long id);
 
 	@Query("SELECT DISTINCT b FROM Brano b LEFT JOIN FETCH b.playlist p WHERE p.id = ?1 ORDER BY b.id")
 	List<Brano> findAllByPlaylistId(Long idPlaylist);

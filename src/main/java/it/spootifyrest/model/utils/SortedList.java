@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import it.spootifyrest.model.Brano;
+
 /**
  * una SortedList è un'estensione di ArrayList che mantiene l'ordine ascendente
  * degli oggetti quando si usa il metodo add o addAll
@@ -29,8 +31,8 @@ public class SortedList<T> extends ArrayList<T> implements List<T> {
 //		L.add(new Brano(22L));
 //		L.add(new Brano(2L));
 //		L.add(new Brano(4L));
-//	
-//		System.out.println(L.isSorted());
+//		
+//		System.out.println(L);
 //	}
 
 	@SuppressWarnings("unchecked")

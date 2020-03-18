@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.spootifyrest.model.Album;
+import it.spootifyrest.model.Brano;
 import it.spootifyrest.repository.AlbumRepository;
 
 @Service
@@ -17,6 +18,9 @@ public class AlbumServiceImpl implements AlbumService {
 
 	@Autowired
 	private AlbumRepository albumRepository;
+
+	@Autowired
+	private BranoService branoService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -39,12 +43,20 @@ public class AlbumServiceImpl implements AlbumService {
 	@Override
 	@Transactional
 	public void inserisciNuovo(Album o) {
-		albumRepository.save(o);
+		albumRepository.save(o); //salvo l'album per ottenere il suo id
+		for (Brano branoItem : o.getBrani()) {
+			branoItem.setAlbum(o); //setto l'id_album da associare al brano
+			branoService.inserisciNuovo(branoItem);
+		}
 	}
 
 	@Override
 	@Transactional
 	public void rimuovi(Album o) {
+		for(Brano branoItem : o.getBrani()) {
+			branoService.rimuovi(branoItem);
+		}
+		
 		albumRepository.delete(o);
 	}
 

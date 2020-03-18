@@ -3,6 +3,7 @@ package it.spootifyrest.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ public class Brano implements Comparable<Brano> {
 	@JoinColumn(name = "album_id", nullable = false)
 	private Album album;
 
-	@OneToMany(mappedBy = "brano", orphanRemoval = true)
+	@OneToMany(mappedBy = "brano", orphanRemoval = true, cascade= {CascadeType.REMOVE})
 	private List<Riproduzione> riproduzioni = new ArrayList<>();
 
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "brani")
@@ -116,6 +117,13 @@ public class Brano implements Comparable<Brano> {
 			return 1;
 
 		return 0;
+	}
+	
+	public void removeFromAllPlaylist() {
+		for(Playlist playlistItem : this.getPlaylist()) {
+			playlistItem.removeBrano(this);
+		}
+		//this.getPlaylist().clear();
 	}
 
 }

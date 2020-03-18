@@ -81,8 +81,9 @@ public class AlbumController {
 
 	@PostMapping("/admin/")
 	public ResponseEntity<AlbumDTO> insertAlbum(@RequestBody @Valid AlbumDTO albumDTO) {
-		boolean includeBrani = false;
+		boolean includeBrani = true;
 		Album albumModel = AlbumDTO.buildAlbumModelFromDTO(albumDTO, includeBrani, true);
+		System.out.println(albumModel);
 		albumService.inserisciNuovo(albumModel);
 
 		Album albumPersist = albumService.caricaSingoloEager(albumModel.getId());
@@ -90,7 +91,7 @@ public class AlbumController {
 		// gli setto l'artista persist per mostrarlo nella resposne
 		albumPersist.setArtista(artistaService.caricaSingolo(albumModel.getArtista().getId()));
 
-		AlbumDTO albumDTOInserito = AlbumDTO.buildAlbumDTOFromModel(albumPersist, false, true);
+		AlbumDTO albumDTOInserito = AlbumDTO.buildAlbumDTOFromModel(albumPersist, includeBrani, true);
 		return ResponseEntity.ok(albumDTOInserito);
 	}
 
@@ -107,10 +108,11 @@ public class AlbumController {
 
 	@DeleteMapping("/admin/{id}")
 	public ResponseEntity<String> deleteAlbum(@PathVariable(value = "id") Long id) {
-		if (albumService.caricaSingolo(id) == null) {
+		Album albumDaRimuovere = albumService.caricaSingolo(id);
+		if (albumDaRimuovere == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("id " + id + " non trovato");
 		}
-		albumService.rimuovi(new Album(id));
+		albumService.rimuovi(albumDaRimuovere);
 		return ResponseEntity.ok("Album con id " + id + " cancellato con successo");
 	}
 }

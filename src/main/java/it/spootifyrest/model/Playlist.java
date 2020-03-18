@@ -38,7 +38,8 @@ public class Playlist {
 
 	@Override
 	public String toString() {
-		return "Playlist [id=" + id + ", titoloPlaylist=" + titoloPlaylist + "]";
+		return "Playlist [id=" + id + ", titoloPlaylist=" + titoloPlaylist + ", brani=" + brani
+				+ "]";
 	}
 
 	public Long getId() {
@@ -97,8 +98,9 @@ public class Playlist {
 	}
 
 	public void removeBrano(Brano brano) {
-		this.getBrani().remove(brano);
 		brano.getPlaylist().remove(this);
+		this.getBrani().remove(brano);
+		
 	}
 
 	@Override
