@@ -43,8 +43,6 @@ public class UtenteController {
 		return ResponseEntity.ok(utenteDTO);
 	}
 
-
-
 	@PutMapping("/admin/{id}/activate")
 	public ResponseEntity<UtenteDTO> activateUtente(@PathVariable(value = "id") Long id) {
 		Utente utenteAttivato = utenteService.attivaUtenteDaId(id);

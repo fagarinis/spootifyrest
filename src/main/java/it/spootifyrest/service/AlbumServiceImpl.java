@@ -1,5 +1,6 @@
 package it.spootifyrest.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,20 +45,35 @@ public class AlbumServiceImpl implements AlbumService {
 	@Transactional
 	public void inserisciNuovo(Album o) {
 		albumRepository.save(o); //salvo l'album per ottenere il suo id
+		
 		for (Brano branoItem : o.getBrani()) {
 			branoItem.setAlbum(o); //setto l'id_album da associare al brano
-			branoService.inserisciNuovo(branoItem);
 		}
+		
+		branoService.inserisciNuoviBrani(o.getBrani());
 	}
-
+	
 	@Override
 	@Transactional
 	public void rimuovi(Album o) {
-		for(Brano branoItem : o.getBrani()) {
-			branoService.rimuovi(branoItem);
+		//TODO sostituire con 1 chiamata = cancella tutti i brani dell'album (usare deleteAll)
+//		for(Brano branoItem : o.getBrani()) {
+//			branoService.rimuovi(branoItem);
+//		}
+		branoService.rimuoviBrani(o.getBrani());
+		albumRepository.delete(o);
+	}
+	
+	@Override
+	@Transactional
+	public void rimuoviAlbums(List<Album> albums) {
+		List<Brano> listaBraniDiTuttiGliAlbum= new ArrayList<>();
+		for(Album albumItem : albums) {
+			listaBraniDiTuttiGliAlbum.addAll(albumItem.getBrani());
 		}
 		
-		albumRepository.delete(o);
+		branoService.rimuoviBrani(listaBraniDiTuttiGliAlbum);
+		albumRepository.deleteAll(albums);
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.spootifyrest.model.Brano;
-import it.spootifyrest.model.Playlist;
 import it.spootifyrest.repository.BranoRepository;
 
 @Service
@@ -51,11 +50,8 @@ public class BranoServiceImpl implements BranoService {
 	@Override
 	@Transactional
 	public void rimuovi(Brano o) {
-		//rimuovo il brano da tutte le playlist in cui è presente
-		for(Playlist playlistItem : o.getPlaylist()) {
-			playlistItem.getBrani().remove(o);
-		}
-		
+		rimuoviBranoDaTutteLePlaylist(o);
+		rimuoviTutteLeRiproduzioniDelBrano(o);
 		branoRepository.delete(o);
 	}
 
@@ -81,11 +77,13 @@ public class BranoServiceImpl implements BranoService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Brano> caricaBraniDaListaBraniTransient(List<Brano> brani) {
-		String query = "SELECT DISTINCT b FROM Brano b where 1=0 ";
+		String query = "SELECT b FROM Brano b where 1=0 ";
 
 		for (Brano brano : brani) {
 			query += " or b.id = " + brano.getId() + " ";
 		}
+		
+		query +=" ORDER BY b.id";
 
 		return entityManager.createQuery(query, Brano.class).getResultList();
 	}
@@ -96,4 +94,55 @@ public class BranoServiceImpl implements BranoService {
 		return branoRepository.findByIdEagerIncludeAlbumAndPlaylists(id).orElse(null);
 	}
 
+	
+	@Override
+	@Transactional
+	public void rimuoviBranoDaTutteLePlaylist(Brano o) {
+		String query = "DELETE FROM playlist_brano pb where pb.brano_id ="+o.getId()+" ";
+		entityManager.createNativeQuery(query).executeUpdate();
+	}
+	
+	@Override
+	@Transactional
+	public void rimuoviBraniDaTutteLePlaylist(List<Brano> listaBrani) {
+		String query = "DELETE FROM playlist_brano pb where 1=0 ";
+		for(Brano branoItem : listaBrani) {
+			query += " or brano_id ="+ branoItem.getId()+" ";
+		}
+		entityManager.createNativeQuery(query).executeUpdate();
+	}
+	
+	@Override
+	@Transactional
+	public void rimuoviTutteLeRiproduzioniDelBrano(Brano o) {
+		String query = "DELETE FROM riproduzione r where r.brano_id ="+o.getId()+" ";
+		entityManager.createNativeQuery(query).executeUpdate();
+	}
+
+	@Override
+	@Transactional
+	public void rimuoviTutteLeRiproduzioneDeiBrani(List<Brano> brani) {
+		String query = "DELETE FROM riproduzione r where 1=0 ";
+		for(Brano branoItem : brani) {
+			query += " or brano_id ="+ branoItem.getId()+" ";
+		}
+		entityManager.createNativeQuery(query).executeUpdate();
+	}
+
+	@Override
+	@Transactional
+	public void rimuoviBrani(List<Brano> brani) {
+		rimuoviBraniDaTutteLePlaylist(brani);
+		rimuoviTutteLeRiproduzioneDeiBrani(brani);
+		
+		branoRepository.deleteAll(brani);
+	}
+
+	@Override
+	@Transactional
+	public void inserisciNuoviBrani(List<Brano> brani) {
+		branoRepository.saveAll(brani);
+	}
+	
+	
 }

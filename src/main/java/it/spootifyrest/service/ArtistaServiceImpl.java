@@ -49,10 +49,12 @@ public class ArtistaServiceImpl implements ArtistaService {
 	@Override
 	@Transactional
 	public void rimuovi(Artista o) {
-		for(Album albumItem : o.getAlbum()) {
-			albumService.rimuovi(albumItem);
-		}
-		
+		//TODO sostituire con 1 chiamata = cancella tutti i brani dell'album e i relativi brani dell'album
+		//removeAll di albumRepository e removeAll di Brani
+//		for(Album albumItem : o.getAlbum()) {
+//			albumService.rimuovi(albumItem);
+//		}
+		albumService.rimuoviAlbums(o.getAlbum());
 		artistaRepository.delete(o);
 	}
 

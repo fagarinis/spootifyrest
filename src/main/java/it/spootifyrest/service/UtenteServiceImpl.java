@@ -81,6 +81,7 @@ public class UtenteServiceImpl implements UtenteService {
 		if (utenteLoggato.getSessione() == null) {
 			utenteLoggato.setSessione(new Sessione());
 		} else {
+			//refresha la sessione generando un nuovo token
 			utenteLoggato.getSessione().refreshConToken();
 		}
 
@@ -202,7 +203,7 @@ public class UtenteServiceImpl implements UtenteService {
 			return null;
 		}
 		Utente utente = repository.findActiveUserWithValidSessionFromToken(token).orElse(null);
-		if (utente != null && utente.getSessione() != null && utente.getSessione().isValid()) {
+		if (utente != null && utente.getSessione().isValid()) {
 			return utente;
 		}
 

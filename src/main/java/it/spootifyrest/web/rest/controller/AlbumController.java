@@ -83,7 +83,6 @@ public class AlbumController {
 	public ResponseEntity<AlbumDTO> insertAlbum(@RequestBody @Valid AlbumDTO albumDTO) {
 		boolean includeBrani = true;
 		Album albumModel = AlbumDTO.buildAlbumModelFromDTO(albumDTO, includeBrani, true);
-		System.out.println(albumModel);
 		albumService.inserisciNuovo(albumModel);
 
 		Album albumPersist = albumService.caricaSingoloEager(albumModel.getId());

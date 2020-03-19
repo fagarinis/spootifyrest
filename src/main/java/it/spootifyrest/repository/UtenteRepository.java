@@ -25,6 +25,6 @@ public interface UtenteRepository extends IBaseRepository<Utente> {
 	@Query("select u from Utente u left join fetch u.ruoli r left join fetch u.sessione s where u.username = ?1 and u.password = ?2 and u.stato = ?3")
 	Optional<Utente> findEagerByUsernameAndPasswordAndStato(String username, String password, StatoUtente attivo);
 
-	@Query("SELECT u FROM Utente u left join fetch u.sessione s left join fetch u.ruoli where s.tokenDiAutenticazione = ?1 and u.stato ='ATTIVO'" )
+	@Query("SELECT u FROM Utente u join fetch u.sessione s left join fetch u.ruoli where s.tokenDiAutenticazione = ?1 and u.stato ='ATTIVO'" )
 	Optional<Utente> findActiveUserWithValidSessionFromToken(String token);
 }
