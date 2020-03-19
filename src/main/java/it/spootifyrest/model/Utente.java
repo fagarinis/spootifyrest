@@ -44,7 +44,7 @@ public class Utente {
 	@Enumerated(EnumType.STRING)
 	private StatoUtente stato = StatoUtente.CREATO;
 
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "utente")
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "utente", orphanRemoval = true)
 	private Sessione sessione;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })

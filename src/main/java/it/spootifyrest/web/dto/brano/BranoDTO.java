@@ -11,7 +11,7 @@ import com.sun.istack.NotNull;
 import it.spootifyrest.model.Brano;
 import it.spootifyrest.web.dto.album.AlbumDTO;
 
-public class BranoDTO {
+public class BranoDTO{
 
 	private Long id;
 	@NotBlank
@@ -99,7 +99,5 @@ public class BranoDTO {
 	public String toString() {
 		return "BranoDTO [id=" + id + ", titoloBrano=" + titoloBrano + ", album=" + album + "]";
 	}
-	
-	
 
 }

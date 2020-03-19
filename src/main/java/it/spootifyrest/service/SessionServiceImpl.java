@@ -55,4 +55,10 @@ public class SessionServiceImpl implements SessioneService {
 		return (List<Sessione>) sessioneRepository.findAll(Example.of(example, matcher));
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public boolean tokenValido(String token) {
+		return sessioneRepository.findByTokenDiAutenticazione(token).orElse(null) != null;
+	}
+
 }

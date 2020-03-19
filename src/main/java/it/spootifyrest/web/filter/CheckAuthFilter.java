@@ -10,6 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -42,6 +43,9 @@ public class CheckAuthFilter implements Filter {
 
 	@Autowired
 	private HttpServletRequest httpServletRequest;
+	
+	@Autowired
+	private HttpServletResponse httpServletResponse;
 
 	@Autowired
 	private UtenteService utenteService;
@@ -74,31 +78,39 @@ public class CheckAuthFilter implements Filter {
 
 		// prendo il path della request che sta passando in questo momento
 		String pathAttuale = httpServletRequest.getServletPath();
+		//TODO eliminare print 
 		System.out.println(pathAttuale);
 
 		if (!isPathInWhiteList(pathAttuale)) {
-
+			if(!sessioneService.tokenValido(getTokenFromRequest())) {
+				httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Token non valido");
+				return;
+			}
 			Utente utenteInSessione = getUtenteInSessione();
-
 			// Print di testing
 //			System.out.println("filtro in azione su path " + pathAttuale);
 //			System.out.println("token: " + getTokenFromRequest());
 //			System.out.println("utente in sessione: " + utenteInSessione);
 
 			if (utenteInSessione == null || utenteInSessione.getSessione() == null) {
-				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nessun utente in sessione valida");
+				//questa è la sintassi corretta per mandare errori in console nel browser
+				httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Sessione utente scaduta");
+				return;
 			}
+			
 			if (utenteInSessione.getRuoli().size() == 0) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-						"Non è stato possibile caricare i ruoli dell'utente");
+				httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "L'utente non appartiene a nessuna categoria di ruolo");
+				return;
 			}
 
 			if (!utenteInSessione.isAdmin() && isPathForOnlyAdmin(pathAttuale)) {
-				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utente non autorizzato all'area admin");
+				httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Utente non autorizzato all'area admin");
+				return;
 			}
 
 			if (!utenteInSessione.isCustomer() && !utenteInSessione.isAdmin() && isPathForOnlyCustomer(pathAttuale)) {
-				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utente non autorizzato all'area customer");
+				httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Utente non autorizzato all'area customer");
+				return;
 			}
 
 			// refresha la sessione dell'utente per ogni chiamata che fa
@@ -110,7 +122,7 @@ public class CheckAuthFilter implements Filter {
 	}
 
 	private boolean isPathInWhiteList(String requestPath) {
-		// bisogna controllare che se il path risulta proprio "" oppure se
+		// bisogna controllare che se il path risulta proprio "/" oppure se
 		// siamo in presenza un url 'libero'
 		if (requestPath.equals(HOME_PATH))
 			return true;
