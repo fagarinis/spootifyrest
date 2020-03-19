@@ -53,9 +53,6 @@ public class CheckAuthFilter implements Filter {
 	@Autowired
 	private SessioneService sessioneService;
 
-	/**
-	 * @return il token dalla request con chiave "token"
-	 */
 	private String getTokenFromRequest() {
 		return httpServletRequest.getHeader("token");
 	}
@@ -73,13 +70,11 @@ public class CheckAuthFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-//		HttpServletRequest httpRequest = (HttpServletRequest) request;
-//		HttpServletResponse httpResponse = (HttpServletResponse) response;
-
 		// prendo il path della request che sta passando in questo momento
 		String pathAttuale = httpServletRequest.getServletPath();
-		//TODO eliminare print 
-		System.out.println(pathAttuale);
+		
+		// TESTING
+		//System.out.println(pathAttuale);
 
 		if (!isPathInWhiteList(pathAttuale)) {
 			if(!sessioneService.tokenValido(getTokenFromRequest())) {
@@ -87,7 +82,8 @@ public class CheckAuthFilter implements Filter {
 				return;
 			}
 			Utente utenteInSessione = getUtenteInSessione();
-			// Print di testing
+			
+			// TESTING
 //			System.out.println("filtro in azione su path " + pathAttuale);
 //			System.out.println("token: " + getTokenFromRequest());
 //			System.out.println("utente in sessione: " + utenteInSessione);

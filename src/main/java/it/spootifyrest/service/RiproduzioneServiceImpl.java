@@ -79,16 +79,23 @@ public class RiproduzioneServiceImpl implements RiproduzioneService {
 		nuovaRiproduzione.setUtente(utenteService.caricaSingolo(idUtente));
 		if (isAlbum) {
 			Album albumInRiproduzione = albumService.caricaSingoloEager(idRaccolta);
+			if(albumInRiproduzione == null) {
+				return null;
+			}
 			nuovaRiproduzione.setAlbum(albumInRiproduzione);
 			nuovaRiproduzione.setBrano(albumInRiproduzione.getPrimoBrano());
 		} else {
 			Playlist playlistInRiproduzione = playlistService.caricaSingoloEager(idRaccolta, true, true, true, true);
+			if(playlistInRiproduzione == null) {
+				return null;
+			}
 			nuovaRiproduzione.setPlaylist(playlistInRiproduzione);
 			nuovaRiproduzione.setBrano(playlistInRiproduzione.getPrimoBrano());
 		}
-
-		inserisciNuovo(nuovaRiproduzione);
 		
+		if(nuovaRiproduzione.getBrano() != null) {
+			inserisciNuovo(nuovaRiproduzione);
+		}
 		return nuovaRiproduzione;
 	}
 

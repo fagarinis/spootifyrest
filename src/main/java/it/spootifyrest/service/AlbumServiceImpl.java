@@ -56,10 +56,6 @@ public class AlbumServiceImpl implements AlbumService {
 	@Override
 	@Transactional
 	public void rimuovi(Album o) {
-		//TODO sostituire con 1 chiamata = cancella tutti i brani dell'album (usare deleteAll)
-//		for(Brano branoItem : o.getBrani()) {
-//			branoService.rimuovi(branoItem);
-//		}
 		branoService.rimuoviBrani(o.getBrani());
 		albumRepository.delete(o);
 	}

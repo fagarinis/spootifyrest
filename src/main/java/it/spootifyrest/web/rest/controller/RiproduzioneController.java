@@ -46,6 +46,12 @@ public class RiproduzioneController {
 		
 		boolean isAlbum = tipoRaccolta.equals("album")? true : false;
 		Riproduzione resultModel = riproduzioneService.caricaRiproduzioneDaIdRaccoltaEToken(idRaccolta, isAlbum, getTokenFromRequest());
+		
+		if(resultModel == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+					tipoRaccolta+"[ID:"+idRaccolta+"] non trovato");
+		}
+		
 		RiproduzioneDTOJson resultDTO = RiproduzioneDTOJson.buildRiproduzioneDTOFromModel(resultModel);
 
 		return ResponseEntity.ok(resultDTO);

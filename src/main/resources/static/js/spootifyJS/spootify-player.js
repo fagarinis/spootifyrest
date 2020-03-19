@@ -44,7 +44,9 @@ function buildSongsTable(json) {
 	table.empty();
 
 	var tipoRaccolta = json["playlist"] == null ? "album" : "playlist";
+	if(json["brano"] != null){
 	var idBranoInAscolto = json["brano"].id;
+	}
 
 	var listaBrani = json[tipoRaccolta]["brani"];
 
