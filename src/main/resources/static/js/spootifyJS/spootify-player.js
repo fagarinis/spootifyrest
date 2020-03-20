@@ -25,7 +25,7 @@ function riproduci() {
 
 function changeTrack(next) {
 	doCallWithTokenFromForm('POST', buildChangeTrackPath(next), {}, function (result) {
-		buildSongsTable(result);
+		updateSelectedTrack(result);
 	});
 }
 
@@ -39,46 +39,92 @@ function cancellaRiproduzione() {
 	});
 }
 
-function buildSongsTable(json) {
-	var table = $("#songsTableId");
-	table.empty();
-
-	var tipoRaccolta = json["playlist"] == null ? "album" : "playlist";
-	if(json["brano"] != null){
-	var idBranoInAscolto = json["brano"].id;
+function buildSongsTable(jsonRiproduzione) {
+	deleteSongsTable();
+	
+	var songsTable = $("#songsTableId");
+	
+	var BranoInAscolto = jsonRiproduzione["brano"];
+	var tipoRaccolta = jsonRiproduzione["playlist"] == null ? "album" : "playlist";
+	var listaBrani = jsonRiproduzione[tipoRaccolta]["brani"];
+	
+	if(BranoInAscolto != null){
+	var idBranoInAscolto = BranoInAscolto.id;
 	}
 
-	var listaBrani = json[tipoRaccolta]["brani"];
+	songsTable.append(buildTableHead(jsonRiproduzione));
 
+	for (var i = 0; i < listaBrani.length; i++) {
+		songsTable.append(buildTableRow(listaBrani[i]));
+	}
+	
+	showPlayer(true);
+	updateSelectedTrack(jsonRiproduzione);
+}
+
+function deleteSongsTable(){
+	$("#songsTableId").empty();
+}
+
+function buildTableHead(jsonRiproduzione){
+	var tipoRaccolta = jsonRiproduzione["playlist"] == null ? "album" : "playlist";
+	
 	var tableHead = "<th> ";
+	
 	if (tipoRaccolta == "album") {
-		tableHead += json["album"].nomeAlbum + " (" + json["album"].annoDiUscita + ")";
+		tableHead += jsonRiproduzione["album"].nomeAlbum + " (" + jsonRiproduzione["album"].annoDiUscita + ")";
 	} else if (tipoRaccolta == "playlist") {
-		tableHead += json["playlist"].titoloPlaylist + " (" + json["playlist"]["utente"].username + ")";
+		tableHead += jsonRiproduzione["playlist"].titoloPlaylist + " (" + jsonRiproduzione["playlist"]["utente"].username + ")";
 	}
 
 	tableHead += " <th>";
-	table.append(tableHead)
+	return tableHead;
+}
 
-	for (var i = 0; i < listaBrani.length; i++) {
-		id = listaBrani[i].id
-		titolo = listaBrani[i].titoloBrano
-		album = listaBrani[i]["album"].nomeAlbum;
-		artista = listaBrani[i]["album"]["artista"].nome + " " + listaBrani[i]["album"]["artista"].cognome;
+function buildTableRow(branoJson){
+	id = branoJson.id
+	titolo = branoJson.titoloBrano
+	album = branoJson["album"].nomeAlbum;
+	artista = branoJson["album"]["artista"].nome + " " + branoJson["album"]["artista"].cognome;
 
-		var tableRow = "<tr><td>";
-		if (id == idBranoInAscolto) {
-			tableRow += " <b>&#9658;";
-		}
+	var tableRow = "<tr><td id='B"+id+"'>";
+	tableRow += titolo + ", " + album + ", " + artista + "</td></tr>";
+	tableRow += "</td></tr>"
+		
+	return tableRow;
+}
 
-		tableRow += titolo + ", " + album + ", " + artista + "</td></tr>";
-
-		if (id == idBranoInAscolto) {
-			tableRow += " </b>";
-		}
-		tableRow += "</td></tr>"
-		table.append(tableRow);
+function updateSelectedTrack(jsonRiproduzione){
+	var branoInAscolto = jsonRiproduzione["brano"];
+	if(branoInAscolto == null){
+		return;
 	}
+	
+	setSelected(branoInAscolto.id); // track is now selected
+	
+}
 
-	showPlayer(true);
+function isSelected(idBrano){
+	return $("#B"+idBrano).data('selected') == 'selected';
+}
+
+function setSelected(idBrano){
+	clearCurrentSelected();
+	
+	var tagBranoRow = document.getElementById("B"+idBrano);
+	tagBranoRow.setAttribute('selected', 'selected');
+	tagBranoRow.innerHTML = "<b>"+tagBranoRow.innerHTML+"</b>";
+}
+
+function clearCurrentSelected(){
+	var idSelected = getSelectedTag().attr("id");
+	var tagBranoSelectedRow =  document.getElementById(idSelected);
+	if(tagBranoSelectedRow != null){
+		tagBranoSelectedRow.setAttribute('selected',"''");
+		tagBranoSelectedRow.innerHTML = tagBranoSelectedRow.innerText;
+	}
+}
+
+function getSelectedTag(){
+	return $("[selected ='selected']");
 }
