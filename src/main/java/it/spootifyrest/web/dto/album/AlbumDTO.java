@@ -8,8 +8,8 @@ import javax.validation.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import it.spootifyrest.model.Album;
-import it.spootifyrest.model.Artista;
 import it.spootifyrest.model.Brano;
+import it.spootifyrest.web.dto.artista.ArtistaDTO;
 
 public class AlbumDTO {
 
@@ -20,7 +20,7 @@ public class AlbumDTO {
 	private String genereMusicale;
 
 	@JsonIgnoreProperties(value = { "album" })
-	private Artista artista;
+	private ArtistaDTO artista;
 
 	@JsonIgnoreProperties(value = { "album", "riproduzioni", "playlist" })
 	private List<Brano> brani = new ArrayList<>();
@@ -57,11 +57,11 @@ public class AlbumDTO {
 		this.genereMusicale = genereMusicale;
 	}
 
-	public Artista getArtista() {
+	public ArtistaDTO getArtista() {
 		return artista;
 	}
 
-	public void setArtista(Artista artista) {
+	public void setArtista(ArtistaDTO artista) {
 		this.artista = artista;
 	}
 
@@ -83,7 +83,7 @@ public class AlbumDTO {
 		result.setAnnoDiUscita(source.getAnnoDiUscita());
 		result.setGenereMusicale(source.getGenereMusicale());
 		if (includeArtista) {
-			result.setArtista(source.getArtista());
+			result.setArtista(ArtistaDTO.buildArtistaModelFromDTO(source.getArtista(), false));
 		}
 		if (includeBrani) {
 			result.setBrani(source.getBrani());
@@ -103,7 +103,7 @@ public class AlbumDTO {
 		result.setAnnoDiUscita(source.getAnnoDiUscita());
 		result.setGenereMusicale(source.getGenereMusicale());
 		if (includeArtista) {
-			result.setArtista(source.getArtista());
+			result.setArtista(ArtistaDTO.buildArtistaDTOFromModel(source.getArtista(), false));
 		}
 		if (includeBrani) {
 			result.setBrani(source.getBrani());

@@ -22,6 +22,7 @@ import it.spootifyrest.service.AlbumService;
 import it.spootifyrest.service.ArtistaService;
 import it.spootifyrest.web.dto.album.AlbumDTO;
 import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTO;
+import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTOJson;
 
 @RestController
 @RequestMapping(value = "/albums")
@@ -42,14 +43,14 @@ public class AlbumController {
 	 *         mai stato riprodotto
 	 */
 	@PostMapping("/{id}/play")
-	public ResponseEntity<RiproduzioneDTO> play(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<RiproduzioneDTOJson> play(@PathVariable(value = "id") Long id) {
 		final boolean goNext = true;
 		final boolean isAlbum = true;
 		return riproduzioneUtils.handlePlayRaccolta(id, goNext, isAlbum);
 	}
 
 	@PostMapping("/{id}/playPrevious")
-	public ResponseEntity<RiproduzioneDTO> playPrevious(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<RiproduzioneDTOJson> playPrevious(@PathVariable(value = "id") Long id) {
 		final boolean goNext = false;
 		final boolean isAlbum = true;
 		return riproduzioneUtils.handlePlayRaccolta(id, goNext, isAlbum);

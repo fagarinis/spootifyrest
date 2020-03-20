@@ -9,7 +9,6 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.spootifyrest.model.Album;
 import it.spootifyrest.model.Artista;
 import it.spootifyrest.repository.ArtistaRepository;
 

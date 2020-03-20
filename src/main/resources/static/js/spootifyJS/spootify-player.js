@@ -25,7 +25,7 @@ function riproduci() {
 
 function changeTrack(next) {
 	doCallWithTokenFromForm('POST', buildChangeTrackPath(next), {}, function (result) {
-		riproduci();
+		buildSongsTable(result);
 	});
 }
 

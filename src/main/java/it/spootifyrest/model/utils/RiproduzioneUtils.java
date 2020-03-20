@@ -17,6 +17,7 @@ import it.spootifyrest.service.PlaylistService;
 import it.spootifyrest.service.RiproduzioneService;
 import it.spootifyrest.service.UtenteService;
 import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTO;
+import it.spootifyrest.web.dto.riproduzione.RiproduzioneDTOJson;
 
 @Component
 public class RiproduzioneUtils {
@@ -69,14 +70,16 @@ public class RiproduzioneUtils {
 	 * @param isAlbum     true se la raccolta è un album, false se è una playlist
 	 * @return la response con il brano in esecuzione al momento
 	 */
-	public ResponseEntity<RiproduzioneDTO> handlePlayRaccolta(long idRaccolta, boolean goNextTrack, boolean isAlbum) {
+	public ResponseEntity<RiproduzioneDTOJson> handlePlayRaccolta(long idRaccolta, boolean goNextTrack, boolean isAlbum) {
 		Utente utenteInSessione = getUtenteInSessione();
 		lanciaErroreSeRaccoltaInesistenteOVuota(idRaccolta, isAlbum);
 
 		Riproduzione riproduzioneAggiornata = riproduzioneService.ascoltaProssimoBranoDaRaccolta(idRaccolta,
 				utenteInSessione.getId(), isAlbum, goNextTrack);
 
-		return ResponseEntity.ok(RiproduzioneDTO.buildRiproduzioneDTOFromModel(riproduzioneAggiornata));
+		RiproduzioneDTOJson riproduzioneAggiornataDTO = RiproduzioneDTOJson.buildRiproduzioneDTOFromModel(riproduzioneAggiornata);
+		
+		return ResponseEntity.ok(riproduzioneAggiornataDTO);
 	}
 
 	/**
